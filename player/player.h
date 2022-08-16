@@ -34,6 +34,9 @@ public:
 	void Move();
 	void Afin(WorldTransform& worldTransform_);
 
+	Vector3 ConvertToVector3(WorldTransform& worldTransform_);
+
+
 	///<summary>
 	///•`‰æ
 	///</summary>
@@ -66,4 +69,6 @@ private:
 
 	//’e
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+
+	//
 };
