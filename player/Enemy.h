@@ -37,6 +37,15 @@ public:
 
 	void Draw(ViewProjection& viewProjection_);
 
+	//行動フェーズ
+	enum class Phase {
+		Approch,//接近する
+		Leave,//離脱する
+	};
+	void Approch();
+
+	void Leave();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -44,4 +53,11 @@ private:
 	Model* model_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+
+	//フェーズ
+	Phase phase_ = Phase::Approch;
+
+	//キャラクターの移動ベクトル
+	Vector3 ApprochMove = { 0,0,-0.1f };
+	Vector3 LeaveMove = { -0.1f,0.1f,-0.1f };
 };

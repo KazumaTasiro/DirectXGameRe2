@@ -9,6 +9,12 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle)
 
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
+
+	worldTransform_.translation_ = { 0,0,10 };
+
+	Afin(worldTransform_);
+
+	worldTransform_.TransferMatrix();
 }
 
 void Enemy::Update()
@@ -19,15 +25,17 @@ void Enemy::Update()
 
 void Enemy::Move()
 {
-	//キャラクターの移動ベクトル
-	Vector3 move = { 0,0,0 };
 
-	const float speed = 0.1f;
-	const float RotSpeed = 0.05f;
-
-	move.z += speed;
-
-	worldTransform_.translation_ -= move;
+	switch (phase_)
+	{
+	case Enemy::Phase::Approch:
+	default:
+		Approch();
+		break;
+	case Enemy::Phase::Leave:
+		Leave();
+		break;
+	}
 
 	Afin(worldTransform_);
 
@@ -103,4 +111,20 @@ void Enemy::Afin(WorldTransform& worldTransform_)
 void Enemy::Draw(ViewProjection& viewProjection_)
 {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+}
+
+void Enemy::Approch()
+{
+	//移動（ベクトルを加算）
+	worldTransform_.translation_ += ApprochMove;
+	//規定の位置に到達したら離脱
+	if (worldTransform_.translation_.z < 0.0f) {
+		phase_ = Phase::Leave;
+	}
+}
+
+void Enemy::Leave()
+{
+	//移動（べクトルを加算）
+	worldTransform_.translation_ += LeaveMove;
 }
