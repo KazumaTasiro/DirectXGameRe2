@@ -10,6 +10,8 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+#include "Player.h"
+
 
 /// <summary>
 /// ゲームシーン
@@ -18,20 +20,8 @@ class GameScene {
 
 public: // メンバ関数
 
-	//パーツID
-	enum PartId {
-		kRoot,//大元
-		kSpine,//脊椎
-		kChest,//胸
-		kHead,//頭
-		kArmL,//左腕
-		kArmR,//右腕
-		kHip,//尻
-		kLegL,//左足
-		kLegR,//右足
-
-		kNumPartId
-	};
+	//自キャラ
+	Player* player_ = nullptr;
 
 	/// <summary>
 	/// コンストクラタ
@@ -58,13 +48,6 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-
-	//アフィン変換関数
-	void Afin(WorldTransform& worldTransform_);
-
-	//ワールドトランスフォーム更新関数
-	void worldTransChildUpdate(WorldTransform& worldTransform_);
-
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -81,8 +64,8 @@ private: // メンバ変数
 	uint32_t textureHandle_ = 0;
 	//3Dモデル
 	Model* model_ = nullptr;
-	//ワールドトランスフォーム
-	WorldTransform worldTransforms_[100];
+	////ワールドトランスフォーム
+	//WorldTransform worldTransforms_[100];
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
 
