@@ -11,6 +11,7 @@
 #include "WorldTransform.h"
 #include "DebugCamera.h"
 #include "Player.h"
+#include "Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -19,8 +20,12 @@ class GameScene {
 
 public: // メンバ関数
 
-	//自キャラ
+  ///自キャラ
 	Player* player_ = nullptr;
+
+	///敵キャラ
+
+	Enemy* enemy_ = nullptr;
 
 	/// <summary>
 	/// コンストクラタ

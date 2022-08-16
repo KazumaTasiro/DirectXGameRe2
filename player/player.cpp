@@ -30,6 +30,7 @@ void Player::Update()
 		return bullet->IsDead();
 		});
 
+	//キャラクター移動処理
 	Move();
 	//キャラクター攻撃更新
 	Attack();
