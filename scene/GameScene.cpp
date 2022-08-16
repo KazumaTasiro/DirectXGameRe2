@@ -42,20 +42,20 @@ void GameScene::Initialize() {
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 	//スケーリング
 	//XYZ方向のスケーリングを設定
-	//worldTransform_.scale_ = { 3,2,1 };
+	worldTransform_.scale_ = { 3,2,1 };
 
-	////XYZ軸周りの回転角を設定
-	//worldTransform_.rotation_ = { (M_PI / 4),(M_PI / 4) ,(M_PI / 4) };
-
-
-	////XYZ軸周りの平行移動を設定
-	//worldTransform_.translation_ = { 20,6,0 };
+	//XYZ軸周りの回転角を設定
+	worldTransform_.rotation_ = { (M_PI / 4),(M_PI / 4) ,(M_PI / 4) };
 
 
-	//Afin(worldTransform_);
+	//XYZ軸周りの平行移動を設定
+	worldTransform_.translation_ = { 20,6,0 };
 
-	////行列の転送
-	//worldTransform_.TransferMatrix();
+
+	Afin(worldTransform_);
+
+	//行列の転送
+	worldTransform_.TransferMatrix();
 }
 
 void GameScene::Update() { debugCamera_->Update(); }
