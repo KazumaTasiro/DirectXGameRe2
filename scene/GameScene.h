@@ -17,9 +17,25 @@
 class GameScene {
 
 public: // メンバ関数
-  /// <summary>
-  /// コンストクラタ
-  /// </summary>
+
+	//パーツID
+	enum PartId {
+		kRoot,//大元
+		kSpine,//脊椎
+		kChest,//胸
+		kHead,//頭
+		kArmL,//左腕
+		kArmR,//右腕
+		kHip,//尻
+		kLegL,//左足
+		kLegR,//右足
+
+		kNumPartId
+	};
+
+	/// <summary>
+	/// コンストクラタ
+	/// </summary>
 	GameScene();
 
 	/// <summary>
@@ -42,14 +58,24 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+
 	//アフィン変換関数
 	void Afin(WorldTransform& worldTransform_);
+
+	//ワールドトランスフォーム更新関数
+	void worldTransChildUpdate(WorldTransform& worldTransform_);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
+
+
+
+
+	//カメラ上方向の角度
+	float viewAngle = 0.0f;
 
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
@@ -66,7 +92,4 @@ private: // メンバ変数
 	/// 
 	//デバックカメラ
 	DebugCamera* debugCamera_ = nullptr;
-
-
-
 };
