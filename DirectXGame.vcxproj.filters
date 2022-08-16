@@ -72,6 +72,12 @@
     <ClCompile Include="player\player.cpp">
       <Filter>ソース ファイル\player</Filter>
     </ClCompile>
+    <ClCompile Include="scene\Afin.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="player\PlayerBullet.cpp">
+      <Filter>ソース ファイル\player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3d\ViewProjection.h">
@@ -156,6 +162,12 @@
       <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
     <ClInclude Include="player\player.h">
+      <Filter>ソース ファイル\player</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\Afin.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="player\PlayerBullet.h">
       <Filter>ソース ファイル\player</Filter>
     </ClInclude>
   </ItemGroup>

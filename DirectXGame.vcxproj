@@ -101,6 +101,8 @@
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player\player.cpp" />
+    <ClCompile Include="player\PlayerBullet.cpp" />
+    <ClCompile Include="scene\Afin.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +133,8 @@
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="player\player.h" />
+    <ClInclude Include="player\PlayerBullet.h" />
+    <ClInclude Include="scene\Afin.h" />
     <ClInclude Include="scene\GameScene.h" />
   </ItemGroup>
   <ItemGroup>
