@@ -15,21 +15,12 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle)
 	Afin(worldTransform_);
 
 	worldTransform_.TransferMatrix();
-
-	/*Approch();*/
 }
 
 void Enemy::Update()
 {
 	//キャラクター移動処理
 	Move();
-
-	//Fire();
-
-	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
-		bullet->Update();
-	}
 }
 
 void Enemy::Move()
@@ -38,14 +29,13 @@ void Enemy::Move()
 	switch (phase_)
 	{
 	case Enemy::Phase::Approch:
+	default:
 		Approch();
 		break;
 	case Enemy::Phase::Leave:
 		Leave();
 		break;
 	}
-
-	//Approch();
 
 	Afin(worldTransform_);
 
@@ -118,41 +108,9 @@ void Enemy::Afin(WorldTransform& worldTransform_)
 	worldTransform_.matWorld_ *= matTrans;
 }
 
-void Enemy::Fire()
-{
-		//弾の速度
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
-		
-
-		//弾を生成し、初期化
-		std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
-
-		//弾を登録する
-		bullets2_.push_back(std::move(newBullet));
-}
-
-Vector3 Enemy::GetWorldPosition()
-{
-	//ワールド座標を入れる変数
-	Vector3 worldPos;
-	//ワールド行列の平行移動成分を取得（ワールド座標）
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
-
-	return worldPos;
-}
-
 void Enemy::Draw(ViewProjection& viewProjection_)
 {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
-
-	//弾描画
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
-		bullet->Draw(viewProjection_);
-	}
 }
 
 void Enemy::Approch()
@@ -163,20 +121,10 @@ void Enemy::Approch()
 	if (worldTransform_.translation_.z < 0.0f) {
 		phase_ = Phase::Leave;
 	}
-
-	time -= 1;
-
-	if (time <= 0) {
-		Fire();
-		//発射タイマーを初期化
-		time = kFireInterval;
-	}
-
 }
 
 void Enemy::Leave()
 {
 	//移動（べクトルを加算）
 	worldTransform_.translation_ += LeaveMove;
-
 }
