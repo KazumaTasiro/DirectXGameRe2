@@ -10,7 +10,7 @@
 ///<summary>
 ///自キャラ
 ///</summary>
-class PlayerBullet {
+class EnemyBullet {
 public:
 	///<summary>
 	///初期化
@@ -37,10 +37,8 @@ public:
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
-
 	//モデル
 	Model* model_ = nullptr;
-
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 

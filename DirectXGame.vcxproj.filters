@@ -84,6 +84,9 @@
     <ClCompile Include="player\Enemy.cpp">
       <Filter>ソース ファイル\enemy</Filter>
     </ClCompile>
+    <ClCompile Include="enemy\EnemyBullet.cpp">
+      <Filter>ソース ファイル\enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3d\ViewProjection.h">
@@ -177,6 +180,9 @@
       <Filter>ソース ファイル\player</Filter>
     </ClInclude>
     <ClInclude Include="player\Enemy.h">
+      <Filter>ソース ファイル\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy\EnemyBullet.h">
       <Filter>ソース ファイル\enemy</Filter>
     </ClInclude>
   </ItemGroup>

@@ -34,8 +34,9 @@ public:
 	void Move();
 	void Afin(WorldTransform& worldTransform_);
 
-	Vector3 ConvertToVector3(WorldTransform& worldTransform_);
+	Vector3 ConvertToVector3(WorldTransform& mat, Vector3 vec);
 
+	Vector3 GetWorldPosition();
 
 	///<summary>
 	///•`‰æ

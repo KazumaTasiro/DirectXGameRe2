@@ -83,7 +83,6 @@ void Player::Move()
 	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
-
 	Afin(worldTransform_);
 
 	worldTransform_.TransferMatrix();
@@ -111,7 +110,7 @@ void Player::Attack()
 		Vector3 velocity(0, 0, kBulletSpeed);
 
 		//速度ベクトルを自機の向きに合わせて回転させる
-		velocity = ConvertToVector3(worldTransform_);
+		velocity = ConvertToVector3(worldTransform_,velocity);
 
 		//弾を生成し、初期化
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
@@ -187,11 +186,27 @@ void Player::Afin(WorldTransform& worldTransform_)
 	worldTransform_.matWorld_ *= matTrans;
 }
 
-Vector3 Player::ConvertToVector3(WorldTransform& worldTransform_)
+Vector3 Player::ConvertToVector3(WorldTransform& mat,Vector3 vec)
 {
-	return Vector3(
-		worldTransform_.matWorld_.m[0][0] + worldTransform_.matWorld_.m[1][0] + worldTransform_.matWorld_.m[2][0],
-		0,
-		worldTransform_.matWorld_.m[0][2] + worldTransform_.matWorld_.m[1][2] + worldTransform_.matWorld_.m[2][2]
-	);
+	Vector3 retVec = {};
+
+	retVec.x = vec.x * mat.matWorld_.m[0][0] + vec.y * mat.matWorld_.m[1][0] + vec.z * mat.matWorld_.m[2][0];
+
+	retVec.y = vec.x * mat.matWorld_.m[0][1] + vec.y * mat.matWorld_.m[1][1] + vec.z * mat.matWorld_.m[2][1];
+
+	retVec.z = vec.x * mat.matWorld_.m[0][2] + vec.y * mat.matWorld_.m[1][2] + vec.z * mat.matWorld_.m[2][2];
+
+	return retVec;
+}
+
+Vector3 Player::GetWorldPosition()
+{
+	//ワールド座標を入れる変数
+	Vector3 worldPos;
+	//ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
 }
