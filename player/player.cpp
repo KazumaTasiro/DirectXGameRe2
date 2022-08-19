@@ -36,7 +36,7 @@ void Player::Move()
 {
 	//キャラクターの移動ベクトル
 	Vector3 move = { 0,0,0 };
-	const float speed = 1.0f;
+	const float speed = 0.1f;
 	const float RotSpeed = 0.05f;
 	if (input_->PushKey(DIK_A)) {
 		move.x -= speed;
@@ -86,7 +86,7 @@ void Player::Attack()
 	if (input_->PushKey(DIK_SPACE))
 	{
 		//弾の速度
-		const float kBulletSpeed = 1.0f;
+		const float kBulletSpeed = 0.01f;
 		Vector3 velocity(0, 0, kBulletSpeed);
 
 		//速度ベクトルを自機の向きに合わせて回転させる
@@ -159,6 +159,10 @@ void Player::Afin(WorldTransform& worldTransform_)
 	worldTransform_.matWorld_ *= matScale;
 	worldTransform_.matWorld_ *= matRot;
 	worldTransform_.matWorld_ *= matTrans;
+}
+
+void Player::OnCollision()
+{
 }
 
 Vector3 Player::ConvertToVector3(WorldTransform& mat, Vector3 vec){

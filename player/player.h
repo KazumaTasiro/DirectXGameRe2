@@ -26,6 +26,9 @@ public:
 	void Move();
 	void Afin(WorldTransform& worldTransform_);
 
+	//衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+
 	Vector3 ConvertToVector3(WorldTransform& mat, Vector3 vec);
 
 	Vector3 GetWorldPosition();
@@ -38,6 +41,9 @@ public:
 	///攻撃
 	///</summary>
 	void Attack();
+
+	//弾リストを取得
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
 
 private:
 	//ワールド変換データ

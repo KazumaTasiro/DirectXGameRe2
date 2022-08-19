@@ -8,7 +8,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle)
 	this->textureHandle_ = textureHandle;
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = { 0,0,10 };
+	worldTransform_.translation_ = { 0,0,20 };
 	Afin(worldTransform_);
 
 	worldTransform_.TransferMatrix();
@@ -22,6 +22,11 @@ void Enemy::Update()
 	Move();
 
 	//Fire();
+
+	//デスフラグの立った弾を削除
+	bullets2_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
+		return bullet->IsDead();
+		});
 
 	//弾更新
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
@@ -113,7 +118,7 @@ void Enemy::Afin(WorldTransform& worldTransform_)
 void Enemy::Fire()
 {
 	//弾の速度
-	const float kBulletSpeed = 1.0f;
+	const float kBulletSpeed = 0.05f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
 	Vector3 PlayerPos = player_->GetWorldPosition();
@@ -202,4 +207,8 @@ int Enemy::Vec3Normalize(Vector3* pOut, Vector3* pV)
 	pOut->z = (float)z;
 
 	return 1;
+}
+
+void Enemy::OnCollision()
+{
 }

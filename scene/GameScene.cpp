@@ -82,6 +82,7 @@ void GameScene::Update() {
 	debugCamera_->Update();
 	player_->Update();
 	enemy_->Update();
+	CheckAllCollisions();
 }
 void GameScene::Draw() {
 	// コマンドリストの取得
@@ -126,4 +127,83 @@ void GameScene::Draw() {
 	// スプライト描画後処理
 	Sprite::PostDraw();
 #pragma endregion
+}
+
+void GameScene::CheckAllCollisions()
+{
+	//判定対象AとBの座標
+	Vector3 posA, posB;
+
+	//自弾リストの取得
+	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
+	//敵弾リストの取得
+	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy_->GetBullets();
+
+#pragma region 自キャラと敵弾の当たり判定
+#pragma endregion
+
+	//自キャラも座標
+	posA = player_->GetWorldPosition();
+
+	//自キャラと敵弾すべての当たり判定
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
+		//敵弾の座標
+		posB = bullet->GetWorldPosition();
+
+		float lol = { (posB.x - posA.x) * (posB.x - posA.x)+ (posB.y - posA.y) * (posB.y - posA.y)+ (posB.z - posA.z) * (posB.z - posA.z) };
+	
+		float radius = { (1 + 1)* (1 + 1) };
+
+		if (lol<= radius) {
+			//自キャラの衝突時コールバックを呼び出す
+			player_->OnCollision();
+			//自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+		}
+	}
+
+#pragma region 自弾と敵キャラの当たり判定
+#pragma endregion
+	//敵キャラも座標
+	posA = enemy_->GetWorldPosition();
+
+	//自キャラと敵弾すべての当たり判定
+	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
+		//敵弾の座標
+		posB = bullet->GetWorldPosition();
+
+		float lol = { (posB.x - posA.x) * (posB.x - posA.x) + (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z) };
+
+		float radius = { (1 + 1) * (1 + 1) };
+
+		if (lol <= radius) {
+			//敵キャラの衝突時コールバックを呼び出す
+			enemy_->OnCollision();
+			//自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+		}
+	}
+
+#pragma region 自弾と敵弾の当たり判定
+#pragma endregion
+	//自弾と敵弾すべての当たり判定
+	for (const std::unique_ptr<EnemyBullet>& bullet2 : enemyBullets) {
+		for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
+			//自弾の座標
+			posA = bullet2->GetWorldPosition();
+			//敵弾の座標
+			posB = bullet->GetWorldPosition();
+
+			float lol = { (posB.x - posA.x) * (posB.x - posA.x) + (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z) };
+
+			float radius = { (1 + 1) * (1 + 1) };
+
+			if (lol <= radius) {
+				//自キャラの衝突時コールバックを呼び出す
+				bullet2->OnCollision();
+				//自弾の衝突時コールバックを呼び出す
+				bullet->OnCollision();
+			}
+		}
+	}
 }

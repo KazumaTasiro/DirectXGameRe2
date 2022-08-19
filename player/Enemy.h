@@ -54,9 +54,15 @@ public:
 	//ベクトルを正規化する
 	int Vec3Normalize(Vector3* pOut, Vector3* pV);
 
+	//衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+
+	//弾リストを取得
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets2_; }
+
 private:
 	//発射間隔
-	static const int kFireInterval = 10;
+	static const int kFireInterval = 100;
 
 	Player* player_ = nullptr;
 
@@ -72,7 +78,7 @@ private:
 	//フェーズ
 	Phase phase_ = Phase::Approch;
 	//キャラクターの移動ベクトル
-	Vector3 ApprochMove = { 0,0,-0.01f };
+	Vector3 ApprochMove = { 0,0,-0.1f };
 	Vector3 LeaveMove = { -0.1f,0.1f,-0.1f };
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets2_;
