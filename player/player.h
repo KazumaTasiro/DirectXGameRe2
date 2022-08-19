@@ -38,6 +38,7 @@ public:
 	///攻撃
 	///</summary>
 	void Attack();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

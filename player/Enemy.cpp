@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Player.h"
 void Enemy::Initialize(Model* model, uint32_t textureHandle)
 {
 	assert(model);
@@ -115,6 +116,13 @@ void Enemy::Fire()
 	const float kBulletSpeed = 1.0f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
+	Vector3 PlayerPos = player_->GetWorldPosition();
+	Vector3 EnemyPos = GetWorldPosition();
+	velocity.x = PlayerPos.x - EnemyPos.x;
+	velocity.y = PlayerPos.y - EnemyPos.y;
+	velocity.z = PlayerPos.z - EnemyPos.z;
+	Vec3Normalize(&velocity, &velocity);
+	velocity *= kBulletSpeed;
 
 	//弾を生成し、初期化
 	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
@@ -129,9 +137,9 @@ Vector3 Enemy::GetWorldPosition()
 	//ワールド座標を入れる変数
 	Vector3 worldPos;
 	//ワールド行列の平行移動成分を取得（ワールド座標）
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }
@@ -170,4 +178,28 @@ void Enemy::Leave()
 	//移動（べクトルを加算）
 	worldTransform_.translation_ += LeaveMove;
 
+}
+
+int Enemy::Vec3Normalize(Vector3* pOut, Vector3* pV)
+{
+	double len;
+	double x, y, z;
+
+	x = (double)(pV->x);
+	y = (double)(pV->y);
+	z = (double)(pV->z);
+	len = sqrt(x * x + y * y + z * z);
+
+	if (len < (1e-6)) return 0;
+
+	len = 1.0 / len;
+	x *= len;
+	y *= len;
+	z *= len;
+
+	pOut->x = (float)x;
+	pOut->y = (float)y;
+	pOut->z = (float)z;
+
+	return 1;
 }

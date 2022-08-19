@@ -51,6 +51,9 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; }
 
+	//ベクトルを正規化する
+	int Vec3Normalize(Vector3* pOut, Vector3* pV);
+
 private:
 	//発射間隔
 	static const int kFireInterval = 10;
@@ -69,7 +72,7 @@ private:
 	//フェーズ
 	Phase phase_ = Phase::Approch;
 	//キャラクターの移動ベクトル
-	Vector3 ApprochMove = { 0,0,-0.1f };
+	Vector3 ApprochMove = { 0,0,-0.01f };
 	Vector3 LeaveMove = { -0.1f,0.1f,-0.1f };
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets2_;
