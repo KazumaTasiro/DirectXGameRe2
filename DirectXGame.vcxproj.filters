@@ -55,6 +55,18 @@
     <Filter Include="ソース ファイル\enemy">
       <UniqueIdentifier>{b4e0b1cf-1e18-4984-ae1e-2319d9b0cebb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Skydome">
+      <UniqueIdentifier>{bfe4e45f-7ba4-4412-8031-b5e92efef663}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\player">
+      <UniqueIdentifier>{7ca71d40-11c9-46d8-bc74-70f23e11a85d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\enemy">
+      <UniqueIdentifier>{d19d5dd9-79ab-4850-9efc-eccdb893a1dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Skydome">
+      <UniqueIdentifier>{8644ecc7-000a-41e2-b120-f8d576a4e61c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -86,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="enemy\EnemyBullet.cpp">
       <Filter>ソース ファイル\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome\Skydome.cpp">
+      <Filter>ソース ファイル\Skydome</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,20 +185,23 @@
     <ClInclude Include="3d\PrimitiveDrawer.h">
       <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
-    <ClInclude Include="player\player.h">
-      <Filter>ソース ファイル\player</Filter>
-    </ClInclude>
     <ClInclude Include="scene\Afin.h">
       <Filter>ヘッダー ファイル\scene</Filter>
     </ClInclude>
+    <ClInclude Include="player\player.h">
+      <Filter>ヘッダー ファイル\player</Filter>
+    </ClInclude>
     <ClInclude Include="player\PlayerBullet.h">
-      <Filter>ソース ファイル\player</Filter>
+      <Filter>ヘッダー ファイル\player</Filter>
     </ClInclude>
     <ClInclude Include="player\Enemy.h">
-      <Filter>ソース ファイル\enemy</Filter>
+      <Filter>ヘッダー ファイル\enemy</Filter>
     </ClInclude>
     <ClInclude Include="enemy\EnemyBullet.h">
-      <Filter>ソース ファイル\enemy</Filter>
+      <Filter>ヘッダー ファイル\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome\Skydome.h">
+      <Filter>ヘッダー ファイル\Skydome</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

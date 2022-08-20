@@ -12,6 +12,7 @@
 #include "DebugCamera.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -20,12 +21,15 @@ class GameScene {
 
 public: // メンバ関数
 
-  ///自キャラ
+	///自キャラ
 	Player* player_ = nullptr;
 
 	///敵キャラ
 
 	Enemy* enemy_ = nullptr;
+
+	//天球
+	Skydome* skydome_ = nullptr;
 
 	/// <summary>
 	/// コンストクラタ
@@ -63,7 +67,7 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 
-
+	Model* modelSkydome_ = nullptr;
 
 
 	//カメラ上方向の角度

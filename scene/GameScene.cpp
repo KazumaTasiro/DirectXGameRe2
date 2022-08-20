@@ -14,6 +14,8 @@ GameScene::~GameScene() {
 	delete model_;
 	delete player_;
 	delete enemy_;
+	delete skydome_;
+	delete modelSkydome_;
 }
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -65,6 +67,10 @@ void GameScene::Initialize() {
 	//std::uniform_real_distribution<float> rotationDist(0.0f, M_PI);
 	////平行移動乱数範囲の指定
 	//std::uniform_real_distribution<float> translationDist(-10.0f, 10.0f);
+	
+	//3Dモデルの生成
+	modelSkydome_ = Model::CreateFromOBJ("uv", true);
+	
 	//自キャラの生成
 	player_ = new Player();
 	//自キャラの初期化
@@ -76,6 +82,12 @@ void GameScene::Initialize() {
 
 	//敵キャラに自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
+
+	//天球の生成
+	skydome_ = new Skydome();
+	//天球の初期化
+	skydome_->Initalize(modelSkydome_);
+
 }
 
 void GameScene::Update() {
@@ -109,6 +121,9 @@ void GameScene::Draw() {
 	player_->Draw(viewProjection_);
 	//敵キャラの描画
 	enemy_->Draw(viewProjection_);
+	//天球の描画
+	skydome_->Draw(viewProjection_);
+	
 	/*for (int i = 0; i < 100; i++) {
 		model_->Draw(worldTransforms_[i], viewProjection_, textureHandle_);
 	}*/
