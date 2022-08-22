@@ -16,6 +16,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 	debugText_ = DebugText::GetInstance();
 	//ƒ[ƒ‹ƒh•ÏŠ·‚Ì‰Šú‰»
 	worldTransform_.Initialize();
+
+	worldTransform_.translation_ = { 0, 0, 20 };
+
+	bulletModel_ = Model::CreateFromOBJ("bullet", true);
 }
 void Player::Update()
 {
@@ -67,13 +71,18 @@ void Player::Move()
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
+
 	Afin(worldTransform_);
+
+	worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
+
+	
 
 	worldTransform_.TransferMatrix();
 	debugText_->SetPos(50, 50);
 	debugText_->Printf("x:%f,y:%f,z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
 }
-void Player::Draw(ViewProjection& viewProjection_)
+void Player::Draw(ViewProjection viewProjection_)
 {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 	//’e•`‰æ
@@ -94,7 +103,7 @@ void Player::Attack()
 
 		//’e‚ğ¶¬‚µA‰Šú‰»
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+		newBullet->Initialize(bulletModel_, GetWorldPosition(), velocity);
 		//’e‚ğ”­Ë‚·‚é
 		bullets_.push_back(std::move(newBullet));
 	}
@@ -188,4 +197,9 @@ Vector3 Player::GetWorldPosition()
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
+}
+
+void Player::SetRailCamera(WorldTransform& worldTransform_)
+{
+	this->worldTransform_.parent_ = &worldTransform_;
 }

@@ -59,7 +59,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Skydome;$(ProjectDir)enemy;$(ProjectDir)player;$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)RailCamera;$(ProjectDir)Skydome;$(ProjectDir)enemy;$(ProjectDir)player;$(ProjectDir)2d;$(ProjectDir)3d;$(ProjectDir)audio;$(ProjectDir)base;$(ProjectDir)input;$(ProjectDir)scene;$(ProjectDir)math;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -104,6 +104,7 @@
     <ClCompile Include="player\Enemy.cpp" />
     <ClCompile Include="player\player.cpp" />
     <ClCompile Include="player\PlayerBullet.cpp" />
+    <ClCompile Include="RailCamera\RailCamera.cpp" />
     <ClCompile Include="scene\Afin.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="Skydome\Skydome.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="player\Enemy.h" />
     <ClInclude Include="player\player.h" />
     <ClInclude Include="player\PlayerBullet.h" />
+    <ClInclude Include="RailCamera\RailCamera.h" />
     <ClInclude Include="scene\Afin.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="Skydome\Skydome.h" />

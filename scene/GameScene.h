@@ -13,6 +13,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Skydome.h"
+#include "RailCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -21,15 +22,6 @@ class GameScene {
 
 public: // メンバ関数
 
-	///自キャラ
-	Player* player_ = nullptr;
-
-	///敵キャラ
-
-	Enemy* enemy_ = nullptr;
-
-	//天球
-	Skydome* skydome_ = nullptr;
 
 	/// <summary>
 	/// コンストクラタ
@@ -62,6 +54,20 @@ public: // メンバ関数
 	void CheckAllCollisions();
 
 private: // メンバ変数
+
+	///自キャラ
+	Player* player_ = nullptr;
+
+	///敵キャラ
+
+	Enemy* enemy_ = nullptr;
+
+	//天球
+	Skydome* skydome_ = nullptr;
+
+	//レールカメラ
+	RailCamera* railCamera_ = nullptr;
+
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;

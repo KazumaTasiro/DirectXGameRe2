@@ -8,6 +8,8 @@
 #include "PlayerBullet.h"
 #include <memory>
 #include <list>
+
+class RailCamera;
 ///<summary>
 ///自キャラ
 ///</summary>
@@ -33,10 +35,12 @@ public:
 
 	Vector3 GetWorldPosition();
 
+	void SetRailCamera(WorldTransform& worldTransform_);
+
 	///<summary>
 	///描画
 	///</summary>
-	void Draw(ViewProjection& viewProjection_);
+	void Draw(ViewProjection viewProjection_);
 	///<summary>
 	///攻撃
 	///</summary>
@@ -50,6 +54,8 @@ private:
 	WorldTransform worldTransform_;
 	//モデル
 	Model* model_ = nullptr;
+	//弾モデル
+	Model* bulletModel_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 	Input* input_ = nullptr;
@@ -61,4 +67,5 @@ private:
 	//弾
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	//
+	RailCamera* railCamera_ = nullptr;
 };

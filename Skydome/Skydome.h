@@ -24,7 +24,7 @@ public:
 	///<summary>
 	///•`‰æ
 	///</summary>
-	void Draw(ViewProjection& viewProjection_);
+	void Draw(ViewProjection viewProjection_);
 
 	void Afin(WorldTransform& worldTransform_);
 

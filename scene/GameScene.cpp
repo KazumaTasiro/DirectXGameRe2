@@ -16,6 +16,7 @@ GameScene::~GameScene() {
 	delete enemy_;
 	delete skydome_;
 	delete modelSkydome_;
+	delete railCamera_;
 }
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -71,8 +72,17 @@ void GameScene::Initialize() {
 	//3Dモデルの生成
 	modelSkydome_ = Model::CreateFromOBJ("uv", true);
 	
+	//レールカメラの生成
+	railCamera_ = new RailCamera();
+	//レールカメラの初期化
+	railCamera_->Initalize();
+
 	//自キャラの生成
 	player_ = new Player();
+
+	//親子関係の設定
+	player_->SetRailCamera(railCamera_->GetworldTransform());
+
 	//自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
 	//敵キャラの生成
@@ -88,9 +98,12 @@ void GameScene::Initialize() {
 	//天球の初期化
 	skydome_->Initalize(modelSkydome_);
 
+
+
 }
 
 void GameScene::Update() {
+	railCamera_->Update();
 	debugCamera_->Update();
 	player_->Update();
 	enemy_->Update();
@@ -118,11 +131,11 @@ void GameScene::Draw() {
 	/// </summary>
 	// 3Dモデル描画
 	//自キャラの描画
-	player_->Draw(viewProjection_);
+	player_->Draw(railCamera_->GetViewProjection());
 	//敵キャラの描画
-	enemy_->Draw(viewProjection_);
+	enemy_->Draw(railCamera_->GetViewProjection());
 	//天球の描画
-	skydome_->Draw(viewProjection_);
+	skydome_->Draw(railCamera_->GetViewProjection());
 	
 	/*for (int i = 0; i < 100; i++) {
 		model_->Draw(worldTransforms_[i], viewProjection_, textureHandle_);

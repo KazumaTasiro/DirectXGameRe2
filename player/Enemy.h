@@ -39,7 +39,7 @@ public:
 	///<summary>
 	///描画
 	///</summary>
-	void Draw(ViewProjection& viewProjection_);
+	void Draw(ViewProjection viewProjection_);
 	//行動フェーズ
 	enum class Phase {
 		Approch,//接近する
