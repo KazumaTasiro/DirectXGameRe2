@@ -1,6 +1,8 @@
 #include "Enemy.h"
 #include "Player.h"
-void Enemy::Initialize(Model* model, uint32_t textureHandle)
+#include"GameScene.h"
+
+void Enemy::Initialize(Model* model, uint32_t textureHandle, Vector3 EnemyPos)
 {
 	assert(model);
 	//引数として受け取ったデータをメンバ変数に記録する
@@ -8,10 +10,10 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle)
 	this->textureHandle_ = textureHandle;
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = { 0,0,20 };
-	Afin(worldTransform_);
+	worldTransform_.translation_ = { EnemyPos.x,EnemyPos.y,EnemyPos.z };
+	/*Afin(worldTransform_);*/
 
-	worldTransform_.TransferMatrix();
+	//worldTransform_.TransferMatrix();
 
 	/*Approch();*/
 }
@@ -21,17 +23,19 @@ void Enemy::Update()
 	//キャラクター移動処理
 	Move();
 
+
+	
 	//Fire();
 
-	//デスフラグの立った弾を削除
-	bullets2_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
-		return bullet->IsDead();
-		});
+	////デスフラグの立った弾を削除
+	//bullets2_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
+	//	return bullet->IsDead();
+	//	});
 
-	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
-		bullet->Update();
-	}
+	////弾更新
+	//for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
+	//	bullet->Update();
+	//}
 }
 
 void Enemy::Move()
@@ -118,8 +122,8 @@ void Enemy::Afin(WorldTransform& worldTransform_)
 void Enemy::Fire()
 {
 	//弾の速度
-	const float kBulletSpeed = 0.05f;
-	Vector3 velocity(0, 0, kBulletSpeed);
+	const float kBulletSpeed = 0.5f;
+	Vector3 velocity(0, 0, 0);
 
 	Vector3 PlayerPos = player_->GetWorldPosition();
 	Vector3 EnemyPos = GetWorldPosition();
@@ -129,12 +133,15 @@ void Enemy::Fire()
 	Vec3Normalize(&velocity, &velocity);
 	velocity *= kBulletSpeed;
 
+	velocity = ConvertToVector3(worldTransform_, velocity);
+
 	//弾を生成し、初期化
 	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 	//弾を登録する
-	bullets2_.push_back(std::move(newBullet));
+	
+	gameScene_->AddEnemyBullet(newBullet);
 }
 
 Vector3 Enemy::GetWorldPosition()
@@ -153,10 +160,10 @@ void Enemy::Draw(ViewProjection viewProjection_)
 {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 
-	//弾描画
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
-		bullet->Draw(viewProjection_);
-	}
+	////弾描画
+	//for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
+	//	bullet->Draw(viewProjection_);
+	//}
 }
 
 void Enemy::Approch()
@@ -211,4 +218,21 @@ int Enemy::Vec3Normalize(Vector3* pOut, Vector3* pV)
 
 void Enemy::OnCollision()
 {
+	EnemyHp--;
+	if (EnemyHp <= 0) {
+		isDead_ = true;
+	}
+}
+
+Vector3 Enemy::ConvertToVector3(WorldTransform& mat, Vector3 vec)
+{
+	Vector3 retVec = {};
+
+	retVec.x = vec.x * mat.matWorld_.m[0][0] + vec.y * mat.matWorld_.m[1][0] + vec.z * mat.matWorld_.m[2][0];
+
+	retVec.y = vec.x * mat.matWorld_.m[0][1] + vec.y * mat.matWorld_.m[1][1] + vec.z * mat.matWorld_.m[2][1];
+
+	retVec.z = vec.x * mat.matWorld_.m[0][2] + vec.y * mat.matWorld_.m[1][2] + vec.z * mat.matWorld_.m[2][2];
+
+	return retVec;
 }

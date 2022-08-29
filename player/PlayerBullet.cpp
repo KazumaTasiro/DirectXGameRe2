@@ -20,11 +20,13 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 
 void PlayerBullet::Update()
 {
+	//座標を移動させる(1フレーム文の移動量を足しこむ)
+	worldTransform_.translation_ += velocity_;
+
 	afin::Afin(worldTransform_);
 	worldTransform_.TransferMatrix();
 
-	//座標を移動させる(1フレーム文の移動量を足しこむ)
-	worldTransform_.translation_ += velocity_;
+	
 
 	//時間経過でデス
 	if (--deathTimer_ <= 0) {

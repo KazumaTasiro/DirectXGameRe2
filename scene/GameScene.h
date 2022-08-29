@@ -14,6 +14,8 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "RailCamera.h"
+#include <sstream>
+
 
 /// <summary>
 /// ゲームシーン
@@ -53,14 +55,40 @@ public: // メンバ関数
 	/// </summary>
 	void CheckAllCollisions();
 
+	/// <summary>
+	/// 敵弾を追加する
+	/// </summary>
+	///	<param name="enemyBullet">敵弾</param>
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet>& enemyBullet);
+
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return enemyBullets_; }
+
+	/// <summary>
+	/// 敵を追加する
+	/// </summary>
+	///	<param name="enemy">敵</param>
+	void ExistenceEnemy(Vector3 EnemyPos);
+
+	/// <summary>
+	/// 敵を追加する
+	/// </summary>
+	void LoadEnemyPopData();
+
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopCommands();
+
 private: // メンバ変数
+	//敵発生コマンド
+	std::stringstream enemyPopCommands;
 
 	///自キャラ
 	Player* player_ = nullptr;
 
 	///敵キャラ
 
-	Enemy* enemy_ = nullptr;
+	std::list<std::unique_ptr<Enemy>> enemy_;
 
 	//天球
 	Skydome* skydome_ = nullptr;
@@ -94,4 +122,11 @@ private: // メンバ変数
 	/// 
 	//デバックカメラ
 	DebugCamera* debugCamera_ = nullptr;
+
+	//敵弾リスト
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
+
+	bool waitFlag = false;
+	int waitTimes = 0;
 };
+

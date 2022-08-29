@@ -46,9 +46,11 @@ public:
 	///</summary>
 	void Attack();
 
+
 	//弾リストを取得
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
 
+	int Vec3Normalize(Vector3* pOut, Vector3* pV);
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -68,4 +70,5 @@ private:
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	//
 	RailCamera* railCamera_ = nullptr;
+
 };

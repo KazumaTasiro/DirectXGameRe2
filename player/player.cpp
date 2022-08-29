@@ -20,6 +20,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 	worldTransform_.translation_ = { 0, 0, 20 };
 
 	bulletModel_ = Model::CreateFromOBJ("bullet", true);
+
+	//レティクル用テェクスチャ取得
+	uint32_t textureReticle = TextureManager::Load("syamu.jpg");
+
 }
 void Player::Update()
 {
@@ -35,6 +39,7 @@ void Player::Update()
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
 		bullet->Update();
 	}
+
 }
 void Player::Move()
 {
@@ -76,7 +81,7 @@ void Player::Move()
 
 	worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
 
-	
+
 
 	worldTransform_.TransferMatrix();
 	debugText_->SetPos(50, 50);
@@ -95,18 +100,41 @@ void Player::Attack()
 	if (input_->PushKey(DIK_SPACE))
 	{
 		//弾の速度
-		const float kBulletSpeed = 0.01f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+		const float kBulletSpeed = 0.1f;
+		Vector3 velocity2(0, 0, kBulletSpeed);
 
 		//速度ベクトルを自機の向きに合わせて回転させる
-		velocity = ConvertToVector3(worldTransform_, velocity);
+		velocity2 = ConvertToVector3(worldTransform_, velocity2);
 
 		//弾を生成し、初期化
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(bulletModel_, GetWorldPosition(), velocity);
+		newBullet->Initialize(bulletModel_, GetWorldPosition(), velocity2);
 		//弾を発射する
 		bullets_.push_back(std::move(newBullet));
 	}
+}
+int Player::Vec3Normalize(Vector3* pOut, Vector3* pV)
+{
+	double len;
+	double x, y, z;
+
+	x = (double)(pV->x);
+	y = (double)(pV->y);
+	z = (double)(pV->z);
+	len = sqrt(x * x + y * y + z * z);
+
+	if (len < (1e-6)) return 0;
+
+	len = 1.0 / len;
+	x *= len;
+	y *= len;
+	z *= len;
+
+	pOut->x = (float)x;
+	pOut->y = (float)y;
+	pOut->z = (float)z;
+
+	return 1;
 }
 void Player::Afin(WorldTransform& worldTransform_)
 {
@@ -174,17 +202,17 @@ void Player::OnCollision()
 {
 }
 
-Vector3 Player::ConvertToVector3(WorldTransform& mat, Vector3 vec){
+Vector3 Player::ConvertToVector3(WorldTransform& mat, Vector3 vec) {
 
-Vector3 retVec = {};
+	Vector3 retVec = {};
 
-retVec.x = vec.x * mat.matWorld_.m[0][0] + vec.y * mat.matWorld_.m[1][0] + vec.z * mat.matWorld_.m[2][0];
+	retVec.x = vec.x * mat.matWorld_.m[0][0] + vec.y * mat.matWorld_.m[1][0] + vec.z * mat.matWorld_.m[2][0];
 
-retVec.y = vec.x * mat.matWorld_.m[0][1] + vec.y * mat.matWorld_.m[1][1] + vec.z * mat.matWorld_.m[2][1];
+	retVec.y = vec.x * mat.matWorld_.m[0][1] + vec.y * mat.matWorld_.m[1][1] + vec.z * mat.matWorld_.m[2][1];
 
-retVec.z = vec.x * mat.matWorld_.m[0][2] + vec.y * mat.matWorld_.m[1][2] + vec.z * mat.matWorld_.m[2][2];
+	retVec.z = vec.x * mat.matWorld_.m[0][2] + vec.y * mat.matWorld_.m[1][2] + vec.z * mat.matWorld_.m[2][2];
 
-return retVec;
+	return retVec;
 }
 
 Vector3 Player::GetWorldPosition()
