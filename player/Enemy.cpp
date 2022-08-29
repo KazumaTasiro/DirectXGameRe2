@@ -8,7 +8,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle)
 	this->textureHandle_ = textureHandle;
 	//ƒ[ƒ‹ƒh•ÏŠ·‚Ì‰Šú‰»
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = { 0,0,20 };
+	worldTransform_.translation_ = { 0,0,50 };
 	Afin(worldTransform_);
 
 	worldTransform_.TransferMatrix();
@@ -118,7 +118,7 @@ void Enemy::Afin(WorldTransform& worldTransform_)
 void Enemy::Fire()
 {
 	//’e‚Ì‘¬“x
-	const float kBulletSpeed = 0.05f;
+	const float kBulletSpeed = 0.5f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
 	Vector3 PlayerPos = player_->GetWorldPosition();
