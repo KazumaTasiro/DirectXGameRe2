@@ -1,6 +1,8 @@
 #include "Enemy.h"
 #include "Player.h"
-void Enemy::Initialize(Model* model, uint32_t textureHandle)
+#include"GameScene.h"
+
+void Enemy::Initialize(Model* model, uint32_t textureHandle, Vector3 EnemyPos)
 {
 	assert(model);
 	//引数として受け取ったデータをメンバ変数に記録する
@@ -8,7 +10,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle)
 	this->textureHandle_ = textureHandle;
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = { 0,0,20 };
+	worldTransform_.translation_ = EnemyPos;
 	Afin(worldTransform_);
 
 	worldTransform_.TransferMatrix();
@@ -23,15 +25,13 @@ void Enemy::Update()
 
 	//Fire();
 
-	//デスフラグの立った弾を削除
-	bullets2_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
-		return bullet->IsDead();
-		});
-
-	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
-		bullet->Update();
-	}
+	
+	/*debugText_->SetPos(50, 70);
+	debugText_->Printf("x:%f,y:%f,z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);*/
+	////弾更新
+	//for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
+	//	bullet->Update();
+	//}
 }
 
 void Enemy::Move()
@@ -119,7 +119,10 @@ void Enemy::Fire()
 {
 	//弾の速度
 	const float kBulletSpeed = 0.05f;
-	Vector3 velocity(0, 0, kBulletSpeed);
+	assert(player_);
+	Vector3 velocity(0, 0, 0);
+
+	
 
 	Vector3 PlayerPos = player_->GetWorldPosition();
 	Vector3 EnemyPos = GetWorldPosition();
@@ -134,7 +137,7 @@ void Enemy::Fire()
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 	//弾を登録する
-	bullets2_.push_back(std::move(newBullet));
+	gameScene_->AddEnemyBullet(newBullet);
 }
 
 Vector3 Enemy::GetWorldPosition()
@@ -153,21 +156,24 @@ void Enemy::Draw(ViewProjection viewProjection_)
 {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 
-	//弾描画
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
-		bullet->Draw(viewProjection_);
-	}
+	////弾描画
+	//for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
+	//	bullet->Draw(viewProjection_);
+	//}
 }
 
 void Enemy::Approch()
 {
 	//移動（ベクトルを加算）
 	worldTransform_.translation_ += ApprochMove;
-	//規定の位置に到達したら離脱
-	if (worldTransform_.translation_.z < 0.0f) {
-		phase_ = Phase::Leave;
-	}
+	////規定の位置に到達したら離脱
+	//if (worldTransform_.translation_.z < 0.0f) {
+	//	phase_ = Phase::Leave;
+	//}
 
+	if (worldTransform_.translation_.z < 0.0f) {
+		worldTransform_.translation_.z = 30.0f;
+	}
 	time -= 1;
 
 	if (time <= 0) {

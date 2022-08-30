@@ -17,7 +17,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 	//ƒ[ƒ‹ƒh•ÏŠ·‚Ì‰Šú‰»
 	worldTransform_.Initialize();
 
-	worldTransform_.translation_ = { 0, 0, 20 };
+	worldTransform_.translation_ = { 0, 0, 0 };
 
 	bulletModel_ = Model::CreateFromOBJ("bullet", true);
 }
