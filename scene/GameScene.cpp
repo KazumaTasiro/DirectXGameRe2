@@ -87,6 +87,8 @@ void GameScene::Initialize() {
 	//親子関係の設定
 	player_->SetRailCamera(railCamera_->GetworldTransform());
 
+	//レティクルのテクスチャ
+	TextureManager::Load("Reticle.png");
 	
 	//for (std::unique_ptr<Enemy>& enemy : enemy_) {
 	//	//敵キャラの初期化
@@ -116,7 +118,7 @@ void GameScene::Update() {
 	
 	railCamera_->Update();
 	debugCamera_->Update();
-	player_->Update();
+	player_->Update(railCamera_->GetViewProjection());
 	UpdateEnemyPopCommands();
 
 	for (std::unique_ptr<Enemy>& enemy : enemy_) {
@@ -187,6 +189,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	player_->DrawUI();
+
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
 	//

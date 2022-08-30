@@ -1,4 +1,6 @@
 #include "Player.h"
+using namespace MathUtility;
+
 Player::Player()
 {
 }
@@ -16,12 +18,18 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 	debugText_ = DebugText::GetInstance();
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform3DReticle_.Initialize();
 
-	worldTransform_.translation_ = { 0, 0, 0 };
+	worldTransform_.translation_ = { 0, 0, 20 };
 
 	bulletModel_ = Model::CreateFromOBJ("bullet", true);
+	//レティクル用テクスチャ取得
+	uint32_t textureReticle = TextureManager::Load("Reticle.png");
+	//スプライト生成
+	sprite2DReticle_.reset(
+		Sprite::Create(textureReticle, Vector2(500, 350), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
 }
-void Player::Update()
+void Player::Update(ViewProjection viewProjection_)
 {
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) {
@@ -35,6 +43,47 @@ void Player::Update()
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
 		bullet->Update();
 	}
+	//自機から3Dレティクルへの距離
+	const float kDistancePlayerTo3DReticle = 60.0f;
+	//自機から3Dレティクルへのオフセット(Z+向き)
+	Vector3 offset = { 0, 0, 1.0f };
+	//自機のワールド座標の回転を反映
+	offset = ConvertToVector3( worldTransform_, offset);
+	//ベクトルの長さを整える
+	Vec3Normalize(&offset, &offset);
+	offset *= kDistancePlayerTo3DReticle;
+	//3Dレティクル座標設定
+	worldTransform3DReticle_.translation_ = {
+		offset.x + worldTransform_.matWorld_.m[3][0],
+		offset.y + worldTransform_.matWorld_.m[3][1],
+		offset.z + worldTransform_.matWorld_.m[3][2]
+	};
+	//行列更新
+	Afin(worldTransform3DReticle_);
+	worldTransform3DReticle_.TransferMatrix();
+
+	//3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
+	Vector3 positionReticle = {worldTransform3DReticle_.matWorld_.m[3][0],worldTransform3DReticle_.matWorld_.m[3][1],worldTransform3DReticle_.matWorld_.m[3][2] };
+
+	Vector2 windowWH =
+		Vector2(WinApp::GetInstance()->kWindowWidth, WinApp::GetInstance()->kWindowHeight);
+
+	//ビューポート行列
+	Matrix4 Viewport = {
+	   windowWH.x / 2,			  0,  0,  0,
+					0,	-windowWH.y / 2,  0,  0,
+					0,				  0,  1,  0,
+	   windowWH.x / 2,	 windowWH.y / 2,  0,  1
+	};
+
+	//ビュー行列とプロジェクション行列、ビューポート行列を合成する
+	Matrix4 matViewProjectionViewport = viewProjection_.matView * viewProjection_.matProjection * Viewport;
+
+	//ワールド→スクリーン座標変換(ここから3Dから2Dになる)
+	positionReticle = clossV3V4(positionReticle, matViewProjectionViewport);
+
+	//スプライトのレティクルに座標設定
+	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
 }
 void Player::Move()
 {
@@ -89,6 +138,8 @@ void Player::Draw(ViewProjection viewProjection_)
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
 		bullet->Draw(viewProjection_);
 	}
+	//3Dレティクルを描画
+	model_->Draw(worldTransform3DReticle_, viewProjection_, textureHandle_);
 }
 void Player::Attack()
 {
@@ -101,12 +152,65 @@ void Player::Attack()
 		//速度ベクトルを自機の向きに合わせて回転させる
 		velocity = ConvertToVector3(worldTransform_, velocity);
 
+		//自機から標準オブジェクトへのベクトル
+		velocity = { 
+		worldTransform3DReticle_.matWorld_.m[3][0] - worldTransform_.matWorld_.m[3][0],
+		worldTransform3DReticle_.matWorld_.m[3][1] - worldTransform_.matWorld_.m[3][1],
+		worldTransform3DReticle_.matWorld_.m[3][2] - worldTransform_.matWorld_.m[3][2] };
+		Vec3Normalize(&velocity, &velocity);
 		//弾を生成し、初期化
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 		newBullet->Initialize(bulletModel_, GetWorldPosition(), velocity);
 		//弾を発射する
 		bullets_.push_back(std::move(newBullet));
 	}
+}
+int Player::Vec3Normalize(Vector3* pOut, Vector3* pV)
+{
+	double len;
+	double x, y, z;
+
+	x = (double)(pV->x);
+	y = (double)(pV->y);
+	z = (double)(pV->z);
+	len = sqrt(x * x + y * y + z * z);
+
+	if (len < (1e-6)) return 0;
+
+	len = 1.0 / len;
+	x *= len;
+	y *= len;
+	z *= len;
+
+	pOut->x = (float)x;
+	pOut->y = (float)y;
+	pOut->z = (float)z;
+
+	return 1;
+}
+void Player::DrawUI()
+{
+	sprite2DReticle_->Draw();
+}
+Vector3 Player::clossV3V4(const Vector3& vec, const Matrix4& mat)
+{
+	Vector4 divVec = {};
+
+	divVec.x = vec.x * mat.m[0][0] + vec.y * mat.m[1][0] + vec.z * mat.m[2][0] + 1 * mat.m[3][0];
+
+	divVec.y = vec.x * mat.m[0][1] + vec.y * mat.m[1][1] + vec.z * mat.m[2][1] + 1 * mat.m[3][1];
+
+	divVec.z = vec.x * mat.m[0][2] + vec.y * mat.m[1][2] + vec.z * mat.m[2][2] + 1 * mat.m[3][2];
+
+	divVec.w = vec.x * mat.m[0][3] + vec.y * mat.m[1][3] + vec.z * mat.m[2][3] + 1 * mat.m[3][3];
+
+	divVec.x = divVec.x / divVec.w;
+
+	divVec.y = divVec.y / divVec.w;
+
+	divVec.z = divVec.z / divVec.w;
+
+	return { divVec.x, divVec.y, divVec.z };
 }
 void Player::Afin(WorldTransform& worldTransform_)
 {

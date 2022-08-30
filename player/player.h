@@ -8,6 +8,7 @@
 #include "PlayerBullet.h"
 #include <memory>
 #include <list>
+#include <WinApp.h>
 
 class RailCamera;
 ///<summary>
@@ -24,7 +25,7 @@ public:
 	///<summary>
 	///更新
 	///</summary>
-	void Update();
+	void Update(ViewProjection viewProjection_);
 	void Move();
 	void Afin(WorldTransform& worldTransform_);
 
@@ -49,9 +50,23 @@ public:
 	//弾リストを取得
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
 
+	//ベクトルを正規化する
+	int Vec3Normalize(Vector3* pOut, Vector3* pV);
+
+	///<summary>
+	///UI描画
+	///</summary>
+	void DrawUI();
+
+	Vector3 clossV3V4(const Vector3& vec, const Matrix4& mat);
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
+
+	//3Dレティクル用ワールドトランスフォーム
+	WorldTransform worldTransform3DReticle_;
+
 	//モデル
 	Model* model_ = nullptr;
 	//弾モデル
@@ -68,4 +83,7 @@ private:
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	//
 	RailCamera* railCamera_ = nullptr;
+	//2Dレティクル用スプライト
+	std::unique_ptr<Sprite> sprite2DReticle_;
+
 };
