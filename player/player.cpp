@@ -21,9 +21,6 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 
 	bulletModel_ = Model::CreateFromOBJ("bullet", true);
 
-	//レティクル用テェクスチャ取得
-	uint32_t textureReticle = TextureManager::Load("syamu.jpg");
-
 }
 void Player::Update()
 {
