@@ -172,7 +172,7 @@ void GameScene::Draw() {
 
 	//弾描画
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
-		bullet->Draw(viewProjection_);
+		bullet->Draw(railCamera_->GetViewProjection());
 	}
 	//天球の描画
 	skydome_->Draw(railCamera_->GetViewProjection());
