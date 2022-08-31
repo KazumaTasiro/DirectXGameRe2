@@ -61,6 +61,7 @@ public:
 	Vector3 clossV3V4(const Vector3& vec, const Matrix4& mat);
 
 	int MatrixInverse(Matrix4& pOut, Matrix4& pM);
+	Vector3 AddVector(const Vector3 v1, const Vector3 v2);
 
 private:
 	//ワールド変換データ

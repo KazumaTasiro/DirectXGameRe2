@@ -87,36 +87,52 @@ void Player::Update(ViewProjection viewProjection_)
 
 	//マウスカーソルのスクリーン座標からワールド座標を取得して3Dレティクル配置
 	{
-		//POINT mousePosition;
-		////マウス座標（スクリーン座標）を取得する
-		//GetCursorPos(&mousePosition);
+		POINT mousePosition;
+		//マウス座標（スクリーン座標）を取得する
+		GetCursorPos(&mousePosition);
 
-		////クライアントエリア座標に変換する
-		//HWND hwnd = WinApp::GetInstance()->GetHwnd();
-		//ScreenToClient(hwnd, &mousePosition);
+		//クライアントエリア座標に変換する
+		HWND hwnd = WinApp::GetInstance()->GetHwnd();
+		ScreenToClient(hwnd, &mousePosition);
 
-		////マウス座標を2Dレティクルのスプライトに代入する
-		//sprite2DReticle_->SetPosition(Vector2(mousePosition.x, mousePosition.y));
+		//マウス座標を2Dレティクルのスプライトに代入する
+		sprite2DReticle_->SetPosition(Vector2(mousePosition.x, mousePosition.y));
 
-		////ビュー行列、射影変換、ビューポート行列の合成行列を計算する
-		//Matrix4 matVPV = viewProjection_.matView * viewProjection_.matProjection * Viewport;
+		//ビュー行列、射影変換、ビューポート行列の合成行列を計算する
+		Matrix4 matVPV = viewProjection_.matView * viewProjection_.matProjection * Viewport;
 
-		////合成行列の逆行列を計算する
-		////合成行列の逆行列を計算する
-		//Matrix4 matInverseVPV;
-		//MatrixInverse(matInverseVPV, matVPV);
+		//合成行列の逆行列を計算する
+		//合成行列の逆行列を計算する
+		Matrix4 matInverseVPV;
+		MatrixInverse(matInverseVPV, matVPV);
 
-		////ニアクリップ面上のワールド座標得る（スクリーン→ワールド変換）
-		//Vector3 posNear = Vector3(mousePosition.x, mousePosition.y, 0);
-		////ファークリップ面上のワールド座標を得る（スクリーン→ワールド変換）
-		//Vector3 posFar = Vector3(mousePosition.x, mousePosition.y, 1);
+		//ニアクリップ面上のワールド座標得る（スクリーン→ワールド変換）
+		Vector3 posNear = Vector3(mousePosition.x, mousePosition.y, 0);
+		//ファークリップ面上のワールド座標を得る（スクリーン→ワールド変換）
+		Vector3 posFar = Vector3(mousePosition.x, mousePosition.y, 1);
 
-		////スクリーン座標系からワールド座標系へ
-		//posNear = clossV3V4(posNear, matInverseVPV);
-		//posFar = clossV3V4(posFar, matInverseVPV);
+		//スクリーン座標系からワールド座標系へ
+		posNear = clossV3V4(posNear, matInverseVPV);
+		posFar = clossV3V4(posFar, matInverseVPV);
 
 		//マウスの前方ベクトルを計算する
+		//マウスレイの方向
+		Vector3 mouseDirection = posFar - posNear;
+		mouseDirection = Vector3Normalize(mouseDirection);
 		//ニアクリップ面上のワールド座標から一定距離前進したところに3Dレティクルを配置
+		//カメラから照準オブジェクトの距離
+		const float kDistanceTestObject = 222.0f;
+		worldTransform3DReticle_.translation_ = AddVector(posNear, mouseDirection * kDistanceTestObject);
+
+		//行列更新
+		Afin(worldTransform3DReticle_);
+		worldTransform3DReticle_.TransferMatrix();
+
+		debugText_->SetPos(50, 150);
+		debugText_->Printf(
+			"translation : %f,%f,%f", worldTransform_.translation_.x,
+			worldTransform_.translation_.y,
+			worldTransform_.translation_.z);
 	}
 }
 void Player::Move()
@@ -332,6 +348,18 @@ int Player::MatrixInverse(Matrix4& pOut, Matrix4& pM)
 
 	if (flag) return 1;
 	return 0;
+}
+Vector3 Player::AddVector(const Vector3 v1, const Vector3 v2)
+{
+	Vector3 addVec = {};
+
+	addVec.x = v1.x + v2.x;
+
+	addVec.y = v1.y + v2.y;
+
+	addVec.z = v1.z + v2.z;
+
+	return addVec;
 }
 void Player::Afin(WorldTransform& worldTransform_)
 {
