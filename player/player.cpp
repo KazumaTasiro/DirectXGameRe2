@@ -84,6 +84,40 @@ void Player::Update(ViewProjection viewProjection_)
 
 	//スプライトのレティクルに座標設定
 	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+
+	//マウスカーソルのスクリーン座標からワールド座標を取得して3Dレティクル配置
+	{
+		//POINT mousePosition;
+		////マウス座標（スクリーン座標）を取得する
+		//GetCursorPos(&mousePosition);
+
+		////クライアントエリア座標に変換する
+		//HWND hwnd = WinApp::GetInstance()->GetHwnd();
+		//ScreenToClient(hwnd, &mousePosition);
+
+		////マウス座標を2Dレティクルのスプライトに代入する
+		//sprite2DReticle_->SetPosition(Vector2(mousePosition.x, mousePosition.y));
+
+		////ビュー行列、射影変換、ビューポート行列の合成行列を計算する
+		//Matrix4 matVPV = viewProjection_.matView * viewProjection_.matProjection * Viewport;
+
+		////合成行列の逆行列を計算する
+		////合成行列の逆行列を計算する
+		//Matrix4 matInverseVPV;
+		//MatrixInverse(matInverseVPV, matVPV);
+
+		////ニアクリップ面上のワールド座標得る（スクリーン→ワールド変換）
+		//Vector3 posNear = Vector3(mousePosition.x, mousePosition.y, 0);
+		////ファークリップ面上のワールド座標を得る（スクリーン→ワールド変換）
+		//Vector3 posFar = Vector3(mousePosition.x, mousePosition.y, 1);
+
+		////スクリーン座標系からワールド座標系へ
+		//posNear = clossV3V4(posNear, matInverseVPV);
+		//posFar = clossV3V4(posFar, matInverseVPV);
+
+		//マウスの前方ベクトルを計算する
+		//ニアクリップ面上のワールド座標から一定距離前進したところに3Dレティクルを配置
+	}
 }
 void Player::Move()
 {
@@ -211,6 +245,93 @@ Vector3 Player::clossV3V4(const Vector3& vec, const Matrix4& mat)
 	divVec.z = divVec.z / divVec.w;
 
 	return { divVec.x, divVec.y, divVec.z };
+}
+int Player::MatrixInverse(Matrix4& pOut, Matrix4& pM)
+{
+	Matrix4 mat;
+	int i, j, loop;
+	double fDat, fDat2;
+	double mat_8x4[4][8];
+	int flag;
+	float* pF;
+	double* pD;
+
+	//8 x 4行列に値を入れる
+	for (i = 0; i < 4; i++) {
+		pF = pM.m[i];
+		for (j = 0; j < 4; j++, pF++) mat_8x4[i][j] = (double)(*pF);
+		pD = mat_8x4[i] + 4;
+		for (j = 0; j < 4; j++) {
+			if (i == j)   *pD = 1.0;
+			else         *pD = 0.0;
+			pD++;
+		}
+	}
+
+	flag = 1;
+	for (loop = 0; loop < 4; loop++) {
+		fDat = mat_8x4[loop][loop];
+		if (fDat != 1.0) {
+			if (fDat == 0.0) {
+				for (i = loop + 1; i < 4; i++) {
+					fDat = mat_8x4[i][loop];
+					if (fDat != 0.0) break;
+				}
+				if (i >= 4) {
+					flag = 0;
+					break;
+				}
+				//行を入れ替える
+				for (j = 0; j < 8; j++) {
+					fDat = mat_8x4[i][j];
+					mat_8x4[i][j] = mat_8x4[loop][j];
+					mat_8x4[loop][j] = fDat;
+				}
+				fDat = mat_8x4[loop][loop];
+			}
+
+			for (i = 0; i < 8; i++) mat_8x4[loop][i] /= fDat;
+		}
+		for (i = 0; i < 4; i++) {
+			if (i != loop) {
+				fDat = mat_8x4[i][loop];
+				if (fDat != 0.0f) {
+					//mat[i][loop]をmat[loop]の行にかけて
+					//(mat[j] - mat[loop] * fDat)を計算
+					for (j = 0; j < 8; j++) {
+						fDat2 = mat_8x4[loop][j] * fDat;
+						mat_8x4[i][j] -= fDat2;
+					}
+				}
+			}
+		}
+	}
+
+	if (flag) {
+		for (i = 0; i < 4; i++) {
+			pF = mat.m[i];
+			pD = mat_8x4[i] + 4;
+			for (j = 0; j < 4; j++) {
+				*pF = (float)(*pD);
+				pF++;
+				pD++;
+			}
+		}
+	}
+	else {
+		//単位行列を求める
+		mat = {
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,0,0,1
+		};
+	}
+
+	pOut = mat;
+
+	if (flag) return 1;
+	return 0;
 }
 void Player::Afin(WorldTransform& worldTransform_)
 {

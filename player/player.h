@@ -60,6 +60,8 @@ public:
 
 	Vector3 clossV3V4(const Vector3& vec, const Matrix4& mat);
 
+	int MatrixInverse(Matrix4& pOut, Matrix4& pM);
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
