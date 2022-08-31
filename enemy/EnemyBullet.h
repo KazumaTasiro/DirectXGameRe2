@@ -40,6 +40,8 @@ public:
 	Vector3 GetWorldPosition();
 
 private:
+	DebugText* debugText_;
+
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル

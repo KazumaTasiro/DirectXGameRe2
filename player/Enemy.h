@@ -66,7 +66,7 @@ public:
 
 private:
 	//発射間隔
-	static const int kFireInterval = 100;
+	static const int kFireInterval = 10000;
 
 	Player* player_ = nullptr;
 
@@ -75,7 +75,7 @@ private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 
-	DebugText* debugText_ = nullptr;
+	DebugText* debugText_;
 	//モデル
 	Model* model_ = nullptr;
 

@@ -14,6 +14,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, Vector3 EnemyPos)
 	Afin(worldTransform_);
 
 	worldTransform_.TransferMatrix();
+	debugText_ = DebugText::GetInstance();
 
 	/*Approch();*/
 }
@@ -26,8 +27,10 @@ void Enemy::Update()
 	//Fire();
 
 	
-	/*debugText_->SetPos(50, 70);
-	debugText_->Printf("x:%f,y:%f,z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);*/
+	debugText_->SetPos(50, 70);
+	if (worldTransform_.translation_.x!=NULL) {
+		debugText_->Printf("x:%f,y:%f,z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	}
 	////’eXV
 	//for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
 	//	bullet->Update();

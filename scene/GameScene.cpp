@@ -134,7 +134,7 @@ void GameScene::Update() {
 
 	CheckAllCollisions();
 	/*debugText_->SetPos(50, 70);
-	debugText_->Printf("x:%f,y:%f,z:%f", eee.x, eee.y, eee.z);*/
+	debugText_->Printf("x:%f,y:%f,z:%f", , eee.y, eee.z);*/
 }
 void GameScene::Draw() {
 	// コマンドリストの取得
@@ -170,7 +170,7 @@ void GameScene::Draw() {
 
 	//弾描画
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
-		bullet->Draw(viewProjection_);
+		bullet->Draw(railCamera_->GetViewProjection());
 	}
 	//天球の描画
 	skydome_->Draw(railCamera_->GetViewProjection());

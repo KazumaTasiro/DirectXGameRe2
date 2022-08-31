@@ -14,6 +14,8 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	//引数で受け取った初期座標をセット
 	worldTransform_.translation_ = position;
 
+	debugText_ = DebugText::GetInstance();
+
 	//引数で受け取った速度をメンバ関数に代入
 	velocity_ = velocity;
 }
@@ -29,6 +31,10 @@ void EnemyBullet::Update()
 	//時間経過でデス
 	if (--deathTimer_ <= 0) {
 		isDead_ = true;
+	}
+	debugText_->SetPos(50, 90);
+	if (worldTransform_.translation_.x != NULL) {
+		debugText_->Printf("x:%f,y:%f,z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
 	}
 }
 
