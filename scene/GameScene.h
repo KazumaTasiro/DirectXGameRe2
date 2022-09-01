@@ -10,10 +10,10 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
-#include "Player.h"
-#include "Enemy.h"
-#include "Skydome.h"
-#include "RailCamera.h"
+#include <player/player.h>
+#include <player/Enemy.h>
+#include <Skydome/Skydome.h>
+#include <RailCamera/RailCamera.h>
 #include <sstream>
 
 
@@ -143,9 +143,14 @@ private: // メンバ変数
 
 	int EnemyDeadCount = 0;
 
+	bool PlayerDead = false;
 
 	//タイトル用スプライト
 	std::unique_ptr<Sprite> sprite2DTitle_;
 	std::unique_ptr<Sprite> sprite2DClear_;
 	std::unique_ptr<Sprite> sprite2DOver_;
+	std::unique_ptr<Sprite> sprite2DOperation;
+	std::unique_ptr<Sprite> sprite2DGoTitle;
+	std::unique_ptr<Sprite> sprite2DMove;
+	std::unique_ptr<Sprite> sprite2DMouse;
 };

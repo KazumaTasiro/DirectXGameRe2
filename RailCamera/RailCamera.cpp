@@ -59,10 +59,10 @@ void RailCamera::Update()
 	viewProjection_.UpdateMatrix();
 	viewProjection_.TransferMatrix();
 
-	//視点の座標
-	debugText_->SetPos(50, 170);
-	debugText_->Printf(
-		"eye:(x %f\n,y %f\n,z %f\n)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
+	////視点の座標
+	//debugText_->SetPos(50, 170);
+	//debugText_->Printf(
+	//	"eye:(x %f\n,y %f\n,z %f\n)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 
 }
 

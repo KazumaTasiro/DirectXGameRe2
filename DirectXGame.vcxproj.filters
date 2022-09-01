@@ -197,9 +197,6 @@
     <ClInclude Include="scene\Afin.h">
       <Filter>ヘッダー ファイル\scene</Filter>
     </ClInclude>
-    <ClInclude Include="player\player.h">
-      <Filter>ヘッダー ファイル\player</Filter>
-    </ClInclude>
     <ClInclude Include="player\PlayerBullet.h">
       <Filter>ヘッダー ファイル\player</Filter>
     </ClInclude>
@@ -214,6 +211,9 @@
     </ClInclude>
     <ClInclude Include="RailCamera\RailCamera.h">
       <Filter>ヘッダー ファイル\RailCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="player\player.h">
+      <Filter>ヘッダー ファイル\player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

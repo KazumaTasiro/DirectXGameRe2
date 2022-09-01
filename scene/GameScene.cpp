@@ -28,7 +28,7 @@ void GameScene::Initialize() {
 	debugCamera_ = new DebugCamera(600, 400);
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 	//ファイル名を指定してテクスチャを読み込む
-	textureHandle_ = TextureManager::Load("mario.jpg");
+	textureHandle_ = TextureManager::Load("Enemy.jpg");
 	//３Dモデルの生成
 	model_ = Model::Create();
 	//カメラ視点座標を設定
@@ -53,8 +53,8 @@ void GameScene::Initialize() {
 	//}
 	//ビュープロジェクト
 	viewProjection_.Initialize();
-	//軸方向表示の表示を有効にする
-	AxisIndicator::GetInstance()->SetVisible(true);
+	////軸方向表示の表示を有効にする
+	//AxisIndicator::GetInstance()->SetVisible(true);
 	//軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 	//ライン描画が参照するビュープロジェクションを指定する（アドレス渡し）
@@ -96,11 +96,23 @@ void GameScene::Initialize() {
 	uint32_t textureClear = TextureManager::Load("GameClear.png");
 	//レティクル用テクスチャ取得
 	uint32_t textureOver = TextureManager::Load("GameOver.png");
+	//レティクル用テクスチャ取得
+	uint32_t textureOperation = TextureManager::Load("sousa.png");
+	//レティクル用テクスチャ取得
+	uint32_t textureGoTitle = TextureManager::Load("goTitle.png");
+	//レティクル用テクスチャ取得
+	uint32_t textureMove = TextureManager::Load("Move.png");
+	//レティクル用テクスチャ取得
+	uint32_t textureMouse = TextureManager::Load("mouse.png");
 
 	sprite2DTitle_.reset(Sprite::Create(textureTitle, Vector2(640, 350), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
 	sprite2DClear_.reset(Sprite::Create(textureClear, Vector2(640, 350), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
 	sprite2DOver_.reset(Sprite::Create(textureOver, Vector2(640, 350), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
-	
+
+	sprite2DOperation.reset(Sprite::Create(textureOperation, Vector2(640, 570), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+	sprite2DGoTitle.reset(Sprite::Create(textureGoTitle, Vector2(640, 500), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+	sprite2DMove.reset(Sprite::Create(textureMove, Vector2(640, 500), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+	sprite2DMouse.reset(Sprite::Create(textureMouse, Vector2(780, 600), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
 	//for (std::unique_ptr<Enemy>& enemy : enemy_) {
 	//	//敵キャラの初期化
 	//	enemy->Initialize(model_, textureHandle_);
@@ -139,7 +151,7 @@ void GameScene::Update() {
 
 		break;
 	case GameScene::Phase::GAME:
-		
+		railCamera_->Update();
 		player_->Update(railCamera_->GetViewProjection());
 		UpdateEnemyPopCommands();
 
@@ -147,21 +159,50 @@ void GameScene::Update() {
 			enemy->SetGameScene(this);
 			enemy->Update();
 		}
-		if (EnemyDeadCount >= 1) {
-			/*phase_ = Phase::TITLE;*/
-			/*PhaseReset();*/
+		if (EnemyDeadCount >= 11) {
+			phase_ = Phase::CLEAR;
+			PhaseReset();
 			EnemyPopComandReset();
-			EnemyDeadCount = 0;
 		}
-		break;
-	case GameScene::Phase::CLEAR:
+		if (PlayerDead) {
+			phase_ = Phase::GAMEOVER;
+			PhaseReset();
+			EnemyPopComandReset();
+			for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
+				bullet->OnCollision();
+			}
+			for (std::unique_ptr<Enemy>& enemy : enemy_) {
+				enemy->OnCollision();
+			}
+			
+		}
 
 		break;
+	case GameScene::Phase::CLEAR:
+		if (input_->PushKey(DIK_SPACE)) {
+			phase_ = Phase::TITLE;
+		}
+		for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
+			bullet->OnCollision();
+		}
+		for (std::unique_ptr<Enemy>& enemy : enemy_) {
+			enemy->OnCollision();
+		}
+		break;
 	case GameScene::Phase::GAMEOVER:
+		if (input_->PushKey(DIK_SPACE)) {
+			phase_ = Phase::TITLE;
+		}
+		for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
+			bullet->OnCollision();
+		}
+		for (std::unique_ptr<Enemy>& enemy : enemy_) {
+			enemy->OnCollision();
+		}
 		break;
 	}
 	
-	railCamera_->Update();
+	
 	debugCamera_->Update();
 	
 	//弾更新
@@ -245,15 +286,20 @@ void GameScene::Draw() {
 	{
 	case GameScene::Phase::TITLE:
 		sprite2DTitle_->Draw();
+		sprite2DOperation->Draw();
+		sprite2DMove->Draw();
+		sprite2DMouse->Draw();
 		break;
 	case GameScene::Phase::GAME:
 		player_->DrawUI();
 		break;
 	case GameScene::Phase::CLEAR:
 		sprite2DClear_->Draw();
+		sprite2DGoTitle->Draw();
 		break;
 	case GameScene::Phase::GAMEOVER:
 		sprite2DOver_->Draw();
+		sprite2DGoTitle->Draw();
 		break;
 	}
 	
@@ -296,6 +342,8 @@ void GameScene::CheckAllCollisions()
 			player_->OnCollision();
 			//自弾の衝突時コールバックを呼び出す
 			bullet->OnCollision();
+
+			PlayerDead = true;
 		}
 	}
 
@@ -331,26 +379,26 @@ void GameScene::CheckAllCollisions()
 
 #pragma region 自弾と敵弾の当たり判定
 #pragma endregion
-	//自弾と敵弾すべての当たり判定
-	for (const std::unique_ptr<EnemyBullet>& bullet2 : enemyBullets) {
-		for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
-			//自弾の座標
-			posA = bullet2->GetWorldPosition();
-			//敵弾の座標
-			posB = bullet->GetWorldPosition();
+	////自弾と敵弾すべての当たり判定
+	//for (const std::unique_ptr<EnemyBullet>& bullet2 : enemyBullets) {
+	//	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
+	//		//自弾の座標
+	//		posA = bullet2->GetWorldPosition();
+	//		//敵弾の座標
+	//		posB = bullet->GetWorldPosition();
 
-			float lol = { (posB.x - posA.x) * (posB.x - posA.x) + (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z) };
+	//		float lol = { (posB.x - posA.x) * (posB.x - posA.x) + (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z) };
 
-			float radius = { (1 + 1) * (1 + 1) };
+	//		float radius = { (1 + 1) * (1 + 1) };
 
-			if (lol <= radius) {
-				//自キャラの衝突時コールバックを呼び出す
-				bullet2->OnCollision();
-				//自弾の衝突時コールバックを呼び出す
-				bullet->OnCollision();
-			}
-		}
-	}
+	//		if (lol <= radius) {
+	//			//自キャラの衝突時コールバックを呼び出す
+	//			bullet2->OnCollision();
+	//			//自弾の衝突時コールバックを呼び出す
+	//			bullet->OnCollision();
+	//		}
+	//	}
+	//}
 }
 
 void GameScene::AddEnemyBullet(std::unique_ptr<EnemyBullet>& enemyBullet)
@@ -363,7 +411,7 @@ void GameScene::LoadEnemyPopData()
 {
 	//ファイルを開く
 	std::ifstream file;
-	file.open("Resources/enemyPop 2.csv");
+	file.open("Resources/enemyPop.csv");
 	assert(file.is_open());
 
 	//ファイルを内容を文字列ストリームにコピー
@@ -464,6 +512,8 @@ void GameScene::PhaseReset()
 	railCamera_->Reset();
 
 	EnemyDeadCount = 0;
+
+	PlayerDead = false;
 
 }
 

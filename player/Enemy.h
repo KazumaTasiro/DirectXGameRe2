@@ -9,7 +9,7 @@
 #include <memory>
 #include <list>
 #include"Afin.h"
-#include"EnemyBullet.h"
+#include <enemy/EnemyBullet.h>
 
 
 
@@ -89,7 +89,7 @@ private:
 	//フェーズ
 	Phase phase_ = Phase::Approch;
 	//キャラクターの移動ベクトル
-	Vector3 ApprochMove = { 0,0,-0.01f };
+	Vector3 ApprochMove = { 0,0,0.0f };
 	Vector3 LeaveMove = { -0.1f,0.1f,-0.1f };
 
 

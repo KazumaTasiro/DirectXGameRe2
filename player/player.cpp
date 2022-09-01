@@ -128,11 +128,11 @@ void Player::Update(ViewProjection viewProjection_)
 		Afin(worldTransform3DReticle_);
 		worldTransform3DReticle_.TransferMatrix();
 
-		debugText_->SetPos(50, 150);
+		/*debugText_->SetPos(50, 150);
 		debugText_->Printf(
 			"translation : %f,%f,%f", worldTransform_.translation_.x,
 			worldTransform_.translation_.y,
-			worldTransform_.translation_.z);
+			worldTransform_.translation_.z);*/
 	}
 }
 void Player::Move()
@@ -178,8 +178,8 @@ void Player::Move()
 	
 
 	worldTransform_.TransferMatrix();
-	debugText_->SetPos(50, 50);
-	debugText_->Printf("x:%f,y:%f,z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	/*debugText_->SetPos(50, 50);
+	debugText_->Printf("x:%f,y:%f,z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);*/
 }
 void Player::Draw(ViewProjection viewProjection_)
 {
