@@ -6,7 +6,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 
 	model_ = model;
 	//テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("syamu.jpg");
+	textureHandle_ = TextureManager::Load("bullet.jpg");
 
 	//ワールドトランスフォームの初期化
 	worldTransform_.Initialize();

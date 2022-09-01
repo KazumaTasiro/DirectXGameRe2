@@ -63,6 +63,8 @@ public:
 	int MatrixInverse(Matrix4& pOut, Matrix4& pM);
 	Vector3 AddVector(const Vector3 v1, const Vector3 v2);
 
+	void Reset();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -88,5 +90,8 @@ private:
 	RailCamera* railCamera_ = nullptr;
 	//2Dレティクル用スプライト
 	std::unique_ptr<Sprite> sprite2DReticle_;
+
+	//デスフラグ
+	bool isDead_ = false;
 
 };

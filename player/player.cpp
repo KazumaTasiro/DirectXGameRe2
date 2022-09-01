@@ -20,7 +20,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 	worldTransform_.Initialize();
 	worldTransform3DReticle_.Initialize();
 
-	worldTransform_.translation_ = { 0, 0, 20 };
+	worldTransform_.translation_ = { 0, 0, 5 };
 
 	bulletModel_ = Model::CreateFromOBJ("bullet", true);
 	//レティクル用テクスチャ取得
@@ -141,7 +141,7 @@ void Player::Move()
 	Vector3 move = { 0,0,0 };
 	const float speed = 0.1f;
 	const float RotSpeed = 0.05f;
-	if (input_->PushKey(DIK_A)) {
+	/*if (input_->PushKey(DIK_A)) {
 		move.x -= speed;
 	}
 	else if (input_->PushKey(DIK_D)) {
@@ -158,7 +158,7 @@ void Player::Move()
 	}
 	else if (input_->PushKey(DIK_I)) {
 		worldTransform_.rotation_.y += RotSpeed;
-	}
+	}*/
 	worldTransform_.translation_ += move;
 	//キーボード入力による移動処理
 	//移動限界座標
@@ -183,17 +183,17 @@ void Player::Move()
 }
 void Player::Draw(ViewProjection viewProjection_)
 {
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	/*model_->Draw(worldTransform_, viewProjection_, textureHandle_);*/
 	//弾描画
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
 		bullet->Draw(viewProjection_);
 	}
-	//3Dレティクルを描画
-	model_->Draw(worldTransform3DReticle_, viewProjection_, textureHandle_);
+	////3Dレティクルを描画
+	//model_->Draw(worldTransform3DReticle_, viewProjection_, textureHandle_);
 }
 void Player::Attack()
 {
-	if (input_->PushKey(DIK_SPACE))
+	if (input_->IsTriggerMouse(0))
 	{
 		//弾の速度
 		const float kBulletSpeed = 0.01f;
@@ -361,6 +361,11 @@ Vector3 Player::AddVector(const Vector3 v1, const Vector3 v2)
 
 	return addVec;
 }
+void Player::Reset()
+{
+	worldTransform_.translation_ = { 0, 0, 5 };
+	bullets_.clear();
+}
 void Player::Afin(WorldTransform& worldTransform_)
 {
 	Matrix4 matScale;
@@ -425,6 +430,8 @@ void Player::Afin(WorldTransform& worldTransform_)
 
 void Player::OnCollision()
 {
+	//デスフラグ
+	bool isDead_ = false;
 }
 
 Vector3 Player::ConvertToVector3(WorldTransform& mat, Vector3 vec){

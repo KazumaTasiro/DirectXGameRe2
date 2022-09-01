@@ -6,7 +6,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 
 	model_ = model;
 	//テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("mimu.jpg");
+	/*textureHandle_ = TextureManager::Load("EnemyBullet.jpg");*/
 
 	//ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
@@ -34,7 +34,7 @@ void EnemyBullet::Update()
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection_)
 {
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	model_->Draw(worldTransform_, viewProjection_);
 }
 
 void EnemyBullet::OnCollision()

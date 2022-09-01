@@ -64,6 +64,8 @@ public:
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
+	bool IsDead()const { return isDead_; }
+
 private:
 	//発射間隔
 	static const int kFireInterval = 100;
@@ -78,6 +80,8 @@ private:
 	DebugText* debugText_ = nullptr;
 	//モデル
 	Model* model_ = nullptr;
+	//モデル
+	Model* enemyBulletModel_ = nullptr;
 
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
@@ -90,4 +94,9 @@ private:
 
 
 	int32_t time = 0;
+
+	int EnemyHp = 1;
+
+	//デスフラグ
+	bool isDead_ = false;
 };

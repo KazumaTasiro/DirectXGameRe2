@@ -13,6 +13,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, Vector3 EnemyPos)
 	worldTransform_.translation_ = EnemyPos;
 	Afin(worldTransform_);
 
+	enemyBulletModel_ = Model::CreateFromOBJ("EnemyBullet", true);
+
 	worldTransform_.TransferMatrix();
 
 	/*Approch();*/
@@ -24,7 +26,9 @@ void Enemy::Update()
 	Move();
 
 	//Fire();
-
+	if (EnemyHp <= 0) {
+		isDead_ = true;
+	}
 	
 	/*debugText_->SetPos(50, 70);
 	debugText_->Printf("x:%f,y:%f,z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);*/
@@ -134,7 +138,7 @@ void Enemy::Fire()
 
 	//íeÇê∂ê¨ÇµÅAèâä˙âª
 	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
-	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	newBullet->Initialize(enemyBulletModel_, worldTransform_.translation_, velocity);
 
 	//íeÇìoò^Ç∑ÇÈ
 	gameScene_->AddEnemyBullet(newBullet);
@@ -217,4 +221,5 @@ int Enemy::Vec3Normalize(Vector3* pOut, Vector3* pV)
 
 void Enemy::OnCollision()
 {
+	EnemyHp--;
 }

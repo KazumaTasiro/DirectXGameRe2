@@ -75,6 +75,18 @@ public: // メンバ関数
 	//弾リストを取得
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets2_; }
 
+	//ゲームフェーズ
+	enum class Phase {
+		TITLE,//タイトル
+		GAME,//本編
+		CLEAR,//クリア画面
+		GAMEOVER,//ゲームオーバー画面
+	};
+
+	void PhaseReset();
+
+	void EnemyPopComandReset();
+
 private: // メンバ変数
 
 	///自キャラ
@@ -125,5 +137,15 @@ private: // メンバ変数
 	bool waitflag = false;
 	int waitTimer = 0;
 
+	//フェーズ
+	Phase phase_ = Phase::TITLE;
 	Vector3 eee = { 0,0,0 };
+
+	int EnemyDeadCount = 0;
+
+
+	//タイトル用スプライト
+	std::unique_ptr<Sprite> sprite2DTitle_;
+	std::unique_ptr<Sprite> sprite2DClear_;
+	std::unique_ptr<Sprite> sprite2DOver_;
 };

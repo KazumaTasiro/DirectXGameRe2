@@ -89,6 +89,17 @@ void GameScene::Initialize() {
 
 	//レティクルのテクスチャ
 	TextureManager::Load("Reticle.png");
+
+	//レティクル用テクスチャ取得
+	uint32_t textureTitle = TextureManager::Load("Title.png");
+	//レティクル用テクスチャ取得
+	uint32_t textureClear = TextureManager::Load("GameClear.png");
+	//レティクル用テクスチャ取得
+	uint32_t textureOver = TextureManager::Load("GameOver.png");
+
+	sprite2DTitle_.reset(Sprite::Create(textureTitle, Vector2(640, 350), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+	sprite2DClear_.reset(Sprite::Create(textureClear, Vector2(640, 350), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+	sprite2DOver_.reset(Sprite::Create(textureOver, Vector2(640, 350), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
 	
 	//for (std::unique_ptr<Enemy>& enemy : enemy_) {
 	//	//敵キャラの初期化
@@ -114,17 +125,44 @@ void GameScene::Update() {
 		return bullet->IsDead();
 		});
 
+	//デスフラグの立った弾を削除
+	enemy_.remove_if([](std::unique_ptr<Enemy>& enemy) {
+		return enemy->IsDead();
+		});
 
+	switch (phase_)
+	{
+	case GameScene::Phase::TITLE:
+		if (input_->IsTriggerMouse(0)) {
+			phase_ = Phase::GAME;
+		}
+
+		break;
+	case GameScene::Phase::GAME:
+		
+		player_->Update(railCamera_->GetViewProjection());
+		UpdateEnemyPopCommands();
+
+		for (std::unique_ptr<Enemy>& enemy : enemy_) {
+			enemy->SetGameScene(this);
+			enemy->Update();
+		}
+		if (EnemyDeadCount >= 1) {
+			/*phase_ = Phase::TITLE;*/
+			/*PhaseReset();*/
+			EnemyPopComandReset();
+			EnemyDeadCount = 0;
+		}
+		break;
+	case GameScene::Phase::CLEAR:
+
+		break;
+	case GameScene::Phase::GAMEOVER:
+		break;
+	}
 	
 	railCamera_->Update();
 	debugCamera_->Update();
-	player_->Update(railCamera_->GetViewProjection());
-	UpdateEnemyPopCommands();
-
-	for (std::unique_ptr<Enemy>& enemy : enemy_) {
-		enemy->SetGameScene(this);
-		enemy->Update();
-	}
 	
 	//弾更新
 	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
@@ -160,20 +198,34 @@ void GameScene::Draw() {
 	/// </summary>
 	// 3Dモデル描画
 	//自キャラの描画
-	player_->Draw(railCamera_->GetViewProjection());
+	switch (phase_)
+	{
+	case GameScene::Phase::TITLE:
+
+		break;
+	case GameScene::Phase::GAME:
+		player_->Draw(railCamera_->GetViewProjection());
 
 
-	for (std::unique_ptr<Enemy>& enemy : enemy_) {
-		//敵キャラの描画
-		enemy->Draw(railCamera_->GetViewProjection());
+		for (std::unique_ptr<Enemy>& enemy : enemy_) {
+			//敵キャラの描画
+			enemy->Draw(railCamera_->GetViewProjection());
+		}
+
+
+
+		//弾描画
+		for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
+			bullet->Draw(railCamera_->GetViewProjection());
+		}
+		break;
+	case GameScene::Phase::CLEAR:
+
+		break;
+	case GameScene::Phase::GAMEOVER:
+		break;
 	}
 	
-
-
-	//弾描画
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets2_) {
-		bullet->Draw(railCamera_->GetViewProjection());
-	}
 	//天球の描画
 	skydome_->Draw(railCamera_->GetViewProjection());
 	
@@ -189,7 +241,22 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-	player_->DrawUI();
+	switch (phase_)
+	{
+	case GameScene::Phase::TITLE:
+		sprite2DTitle_->Draw();
+		break;
+	case GameScene::Phase::GAME:
+		player_->DrawUI();
+		break;
+	case GameScene::Phase::CLEAR:
+		sprite2DClear_->Draw();
+		break;
+	case GameScene::Phase::GAMEOVER:
+		sprite2DOver_->Draw();
+		break;
+	}
+	
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
@@ -215,7 +282,7 @@ void GameScene::CheckAllCollisions()
 	//自キャラも座標
 	posA = player_->GetWorldPosition();
 
-	//自キャラと敵弾すべての当たり判定
+	//敵キャラと敵弾すべての当たり判定
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
 		//敵弾の座標
 		posB = bullet->GetWorldPosition();
@@ -238,7 +305,7 @@ void GameScene::CheckAllCollisions()
 
 		
 
-		//自キャラと敵弾すべての当たり判定
+		//自弾と敵すべての当たり判定
 		for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
 		
 			//敵キャラも座標
@@ -256,6 +323,8 @@ void GameScene::CheckAllCollisions()
 				enemy->OnCollision();
 				//自弾の衝突時コールバックを呼び出す
 				bullet->OnCollision();
+
+				EnemyDeadCount++;
 			}
 		}
 	}
@@ -368,65 +437,7 @@ void GameScene::UpdateEnemyPopCommands()
 			//コマンドループを抜ける
 			break;
 		}
-	////待機処理
-	//if (waitflag) {
-	//	waitTimer--;
-	//	if (waitTimer <= 0) {
-	//		//待機完了
-	//		waitflag = false;
-
-	//	}
-	//	return;
-	//}
-	////1行分の文字列を入れる変数
-	//std::string line;
-
-	////コマンド実行ループ
-	//while (getline(enemyPopCommands, line)) {
-	//	//1行分の文字列をストリームに変換して解析しやすくなる
-	//	std::istringstream line_stream(line);
-
-	//	std::string word;
-	//	//,区切りで行の先頭文字列を取得
-	//	getline(line_stream, word, ',');
-	//	//"//"から始まる行はコメント
-	//	if (word.find("//") == 0) {
-	//		//コメント行を飛ばす
-	//		continue;
-	//	}
-	//	//POPコマンド
-	//	if (word.find("POP") == 0) {
-	//		//x座標
-	//		getline(line_stream, word, ',');
-	//		float x = (float)std::atof(word.c_str());
-
-	//		//ｙ座標
-	//		getline(line_stream, word, ',');
-	//		float y = (float)std::atof(word.c_str());
-
-	//		//z座標
-	//		getline(line_stream, word, ',');
-	//		float z = (float)std::atof(word.c_str());
-	//		
-	//		//敵を発生させる
-	//		ExistenceEnemy(Vector3(x, y, z));
-	//		eee = { x,y,z };
-	//	}
-	//	//WAIT
-	//	else if (word.find("WAIT") == 0) {
-	//		getline(line_stream, word, ',');
-
-	//		//待ち時間
-	//		int32_t waitTime = atoi(word.c_str());
-
-	//		//待機開始
-	//		waitflag = true;
-	//		waitTimer = waitTime;
-
-	//		//コマンドループを抜ける
-	//		break;
-	//	}
-		
+	
 	}
 }
 
@@ -442,4 +453,23 @@ void GameScene::ExistenceEnemy(const Vector3& EnemyPos)
 
 	//リストに登録する
 	enemy_.push_back(std::move(newEnemy));
+}
+
+void GameScene::PhaseReset()
+{
+	//自キャラの初期化
+	player_->Reset();
+
+	//レールカメラの初期化
+	railCamera_->Reset();
+
+	EnemyDeadCount = 0;
+
+}
+
+void GameScene::EnemyPopComandReset()
+{
+	enemyPopCommands.str("");
+	enemyPopCommands.clear(std::stringstream::goodbit);
+	LoadEnemyPopData();
 }

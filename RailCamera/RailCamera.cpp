@@ -5,6 +5,7 @@ void RailCamera::Initalize()
 	//ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
 	//ビュープロジェクションの初期化
+	viewProjection_.farZ = 1500;
 	viewProjection_.Initialize();
 
 	debugText_ = DebugText::GetInstance();
@@ -18,17 +19,17 @@ void RailCamera::Update()
 	Vector3 move = { 0,0,0 };
 	const float speed = 0.1f;
 	const float RotSpeed = 0.05f;
-	if (input_->PushKey(DIK_LEFT)) {
+	if (input_->PushKey(DIK_A)) {
 		move.x -= speed;
 	}
-	else if (input_->PushKey(DIK_RIGHT)) {
+	else if (input_->PushKey(DIK_D)) {
 		move.x += speed;
 	}
-	if (input_->PushKey(DIK_UP)) {
-		move.z += speed;
+	if (input_->PushKey(DIK_W)) {
+		move.y += speed;
 	}
-	else if (input_->PushKey(DIK_DOWN)) {
-		move.z -= speed;
+	else if (input_->PushKey(DIK_S)) {
+		move.y -= speed;
 	}
 	if (input_->PushKey(DIK_R)) {
 		worldTransform_.rotation_.y -= RotSpeed;
@@ -136,4 +137,9 @@ void RailCamera::Afin(WorldTransform& worldTransform_)
 	worldTransform_.matWorld_ *= matScale;
 	worldTransform_.matWorld_ *= matRot;
 	worldTransform_.matWorld_ *= matTrans;
+}
+
+void RailCamera::Reset()
+{
+	worldTransform_.translation_ = { 0,0,0 };
 }
