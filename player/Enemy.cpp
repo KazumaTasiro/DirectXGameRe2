@@ -122,7 +122,7 @@ void Enemy::Afin(WorldTransform& worldTransform_)
 void Enemy::Fire()
 {
 	//’e‚Ì‘¬“x
-	const float kBulletSpeed = 0.1f;
+	const float kBulletSpeed = 1.0f;
 	assert(player_);
 	Vector3 velocity(0, 0, 0);
 
