@@ -6,6 +6,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle)
 	//引数として受け取ったデータをメンバ変数に記録する
 	this->model_ = model;
 	this->textureHandle_ = textureHandle;
+	input_ = Input::GetInstance();
 
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
@@ -25,6 +26,12 @@ void Enemy::Move()
 	const float speed = 0.1f;
 	const float RotSpeed = 0.05f;
 
+	if (input_->PushKey(DIK_UP)) {
+		move.z += speed;
+	}
+	if (input_->PushKey(DIK_DOWN)) {
+		move.z -= speed;
+	}
 	move.z += speed;
 
 	worldTransform_.translation_ -= move;

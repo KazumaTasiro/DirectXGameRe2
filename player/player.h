@@ -36,7 +36,7 @@ public:
 
 	Vector3 ConvertToVector3(WorldTransform& worldTransform_);
 
-
+	Vector3 RetrunTrans() { return worldTransform_.translation_; }
 	///<summary>
 	///•`‰æ
 	///</summary>

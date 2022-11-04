@@ -46,7 +46,7 @@ void Player::Move()
 	//キャラクターの移動ベクトル
 	Vector3 move = { 0,0,0 };
 
-	const float speed = 1.0f;
+	const float speed = 0.1f;
 	const float RotSpeed = 0.05f;
 
 	if (input_->PushKey(DIK_A)) {

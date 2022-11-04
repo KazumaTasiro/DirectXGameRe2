@@ -37,6 +37,8 @@ public:
 
 	void Draw(ViewProjection& viewProjection_);
 
+	Vector3 RetrunTrans() { return worldTransform_.translation_; }
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -44,4 +46,5 @@ private:
 	Model* model_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+	Input* input_ = nullptr;
 };
