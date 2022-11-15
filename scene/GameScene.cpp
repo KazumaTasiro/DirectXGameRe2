@@ -81,96 +81,7 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> rotationDist(0.0f, M_PI);
 	//平行移動乱数範囲の指定
 	std::uniform_real_distribution<float> translationDist(-10.0f, 10.0f);
-	//for (int i = 0; i < 100; i++) {
-	//	//ワールドトランスフォーム
-	//	worldTransforms_[i].Initialize();
-	//	//スケーリング
-	//	//XYZ方向のスケーリングを設定
-	//	worldTransforms_[i].scale_ = { 1,1,1 };
-	//	//スケーリング倍率を行列を宣言
-	//	Matrix4 matScale;
-	//	matScale =
-	//	{
-	//	worldTransforms_[i].scale_.x,0,0,0,
-	//	0,worldTransforms_[i].scale_.y,0,0,
-	//	0,0,worldTransforms_[i].scale_.z,0,
-	//	0,0,0,1
-	//	};
-
-	//	//回転
-	//	//XYZ軸周りの回転角を設定
-	//	worldTransforms_[i].rotation_ = { rotationDist(engine),rotationDist(engine) ,rotationDist(engine) };
-	//	//合成用回転行列
-	//	Matrix4 matRot;
-	//	//各軸用回転行列を宣言
-	//	Matrix4 matRotX, matRotY, matRotZ;
-	//	//避難用の関数
-	//	Matrix4 matWorld2;
-
-	//	//Z用回転軸の設定
-	//	matRotZ = {
-	//	cos(worldTransforms_[i].rotation_.z),sin(worldTransforms_[i].rotation_.z),0,0,
-	//	-sin(worldTransforms_[i].rotation_.z),cos(worldTransforms_[i].rotation_.z),0,0,
-	//	0,0,1,0,
-	//	0,0,0,1
-	//	};
-
-	//	//X用回転軸の設定
-	//	matRotX = {
-	//	1,0,0,0,
-	//	0,cos(worldTransforms_[i].rotation_.x),sin(worldTransforms_[i].rotation_.x),0,
-	//	0,-sin(worldTransforms_[i].rotation_.x),cos(worldTransforms_[i].rotation_.x),0,
-	//	0,0,0,1
-	//	};
-
-	//	//Y用回転軸の設定
-	//	matRotY = {
-	//	cos(worldTransforms_[i].rotation_.y),0,-sin(worldTransforms_[i].rotation_.y),0,
-	//	0,1,0,0,
-	//	sin(worldTransforms_[i].rotation_.y),0,cos(worldTransforms_[i].rotation_.y),0,
-	//	0,0,0,1
-	//	};
-
-	//	matRot = {
-	//	1,0,0,0,
-	//	0,1,0,0,
-	//	0,0,1,0,
-	//	0,0,0,1
-	//	};
-	//	//各軸の回転行列を合成
-	//	matRot *= matRotZ;
-	//	matRot *= matRotX;
-	//	matRot *= matRotY;
-
-	//	//worldTransforms_[i].matWorld_ *= matRot;
-	//	////行列の転送
-
-	//	//XYZ軸周りの平行移動を設定
-	//	worldTransforms_[i].translation_ = { translationDist(engine),translationDist(engine),translationDist(engine) };
-	//	//平行移動行列を宣言
-	//	Matrix4 matTrans = MathUtility::Matrix4Identity();
-
-	//	matTrans = {
-	//	1,0,0,0,
-	//	0,1,0,0,
-	//	0,0,1,0,
-	//	worldTransforms_[i].translation_.x,worldTransforms_[i].translation_.y,worldTransforms_[i].translation_.z,1
-	//	};
-
-	//	worldTransforms_[i].matWorld_ = {
-	//	1,0,0,0,
-	//	0,1,0,0,
-	//	0,0,1,0,
-	//	1,1,1,1
-	//	};
-
-	//	worldTransforms_[i].matWorld_ *= matScale;
-	//	worldTransforms_[i].matWorld_ *= matRot;
-	//	worldTransforms_[i].matWorld_ *= matTrans;
-
-	//	//行列の転送
-	//	worldTransforms_[i].TransferMatrix();
-	//}
+	
 	//キャラクター大元
 	worldTransforms_[PartId::kRoot].Initialize();
 	//脊椎
@@ -253,28 +164,12 @@ void GameScene::Update() {
 	}
 	//クリップ距離変更処理
 	{
-		////上下キーでニアクリップ距離を増減
-		//if (input_->PushKey(DIK_UP)) {
-		//	viewProjection_.nearZ += 0.1f;
-		//}
-		//else if (input_->PushKey(DIK_DOWN)) {
-		//	viewProjection_.nearZ -= 0.1f;
-		//}
-		////行列の再計算
-		//viewProjection_.UpdateMatrix();
 
 		//デバック用表示
 		debugText_->SetPos(50, 130);
 		debugText_->Printf("nearZ:%f", viewProjection_.nearZ);
 	}
 	////キャラクターの移動ベクトル
-	//Vector3 move = { 0,0,0 };
-	//if (input_->PushKey(DIK_LEFT)) {
-	//	move.x -= 5;
-	//}
-	//else if (input_->PushKey(DIK_RIGHT)) {
-	//	move.x += 5;
-	//}
 
 	//キャラクター移動処理
 	{
